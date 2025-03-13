@@ -204,7 +204,7 @@ static void BSP_PIN_Common(void)
      */
     // HAL_PIN_Set(PAD_PA34, GPIO_A34, PIN_NOPULL, 1);
     // Key2
-    HAL_PIN_Set(PAD_PA11, GPIO_A11, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA11, GPIO_A11, PIN_NOPULL, 1);
 
     // PA22 #XTAL32K_XI
     // PA23 #XTAL32K_XO
@@ -254,7 +254,7 @@ void BSP_PIN_LCD(void)
 {
 
 #ifdef BSP_LCDC_USING_QADSPI
-    HAL_PIN_Set(PAD_PA01, GPTIM2_CH4, PIN_NOPULL, 1);   // LCDC1_BL_PWM_CTRL, LCD backlight PWM
+    HAL_PIN_Set(PAD_PA01, GPTIM1_CH4, PIN_NOPULL, 1);   // LCDC1_BL_PWM_CTRL, LCD backlight PWM
 
     // LCDC1 - QSPI
     HAL_PIN_Set(PAD_PA02, LCDC1_SPI_TE, PIN_NOPULL, 1);
@@ -268,7 +268,7 @@ void BSP_PIN_LCD(void)
     BSP_PIN_Touch();
     // A37, 39-43 GPIOs
 #elif defined(BSP_LCDC_USING_DBI)
-    HAL_PIN_Set(PAD_PA01, GPTIM2_CH4, PIN_NOPULL, 1);   // LCDC1_BL_PWM_CTRL, LCD backlight PWM
+    HAL_PIN_Set(PAD_PA01, GPTIM1_CH4, PIN_NOPULL, 1);   // LCDC1_BL_PWM_CTRL, LCD backlight PWM
 
     // LCDC1 - QSPI
     HAL_PIN_Set(PAD_PA02, LCDC1_8080_TE, PIN_NOPULL, 1);

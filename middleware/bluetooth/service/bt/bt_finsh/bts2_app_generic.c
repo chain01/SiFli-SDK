@@ -164,9 +164,9 @@ void bt_stop_inquiry(bts2_app_stru *bts2_app_data)
 }
 
 
-void bt_register_receive_earphone_connect_req_handler(BOOL (*cb)(BTS2S_BD_ADDR *p_bd))
+void bt_register_receive_connect_req_handler(BOOL (*cb)(BTS2S_BD_ADDR *p_bd, U24 dev_cls))
 {
-    hcia_register_receive_earphone_connect_req_handler(cb);
+    hcia_register_receive_connect_req_handler(cb);
 }
 
 /*----------------------------------------------------------------------------*

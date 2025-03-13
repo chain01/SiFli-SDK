@@ -1345,6 +1345,7 @@ uint8_t connection_manager_bond_ack_reply(uint8_t conn_idx, uint8_t command, boo
         cfm->accept = accept;
         cfm->conn_idx = conn_idx;
         cfm->request = GAPC_TK_EXCH;
+        memset(cfm->cfm_data.tk.key, 0, 0x10);
 
         uint32_t pin_code = env->pin_code;
         cfm->cfm_data.tk.key[0] = (uint8_t)((pin_code & 0x000000FF) >>  0);
@@ -2974,12 +2975,9 @@ static void cm_cmd(uint8_t argc, char **argv)
 #ifndef BLE_CM_BOND_DISABLE
             for (int i = 0; i < MAX_PAIR_DEV; i++)
             {
-                LOG_I("%d, addr %x:%x:%x:%x:%x:%x, key: %x,%x,%x,%x,%x,%x,%x,%x", g_bond_info.priority[i],
-                      g_bond_info.peer_addr[i].addr.addr[5], g_bond_info.peer_addr[i].addr.addr[4], g_bond_info.peer_addr[i].addr.addr[3],
-                      g_bond_info.peer_addr[i].addr.addr[2], g_bond_info.peer_addr[i].addr.addr[1], g_bond_info.peer_addr[i].addr.addr[0],
-                      g_bond_info.ltk[i].ltk.key[15], g_bond_info.ltk[i].ltk.key[14], g_bond_info.ltk[i].ltk.key[13],
-                      g_bond_info.ltk[i].ltk.key[12], g_bond_info.ltk[i].ltk.key[11], g_bond_info.ltk[i].ltk.key[10],
-                      g_bond_info.ltk[i].ltk.key[9], g_bond_info.ltk[i].ltk.key[8]);
+                LOG_I("bonded dev %d", g_bond_info.priority[i]);
+                LOG_HEX("addr", 16, g_bond_info.peer_addr[i].addr.addr, BD_ADDR_LEN);
+                LOG_HEX("ltk", 16, g_bond_info.ltk[i].ltk.key, GAP_KEY_LEN);
             }
 #endif //BLE_CM_BOND_DISABLE
         }

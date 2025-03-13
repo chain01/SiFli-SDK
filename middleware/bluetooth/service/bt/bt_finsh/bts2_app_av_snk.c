@@ -61,7 +61,10 @@
 #if defined(AUDIO_USING_MANAGER) && defined(AUDIO_BT_AUDIO)
     #include "audio_server.h"
 #endif
-
+#if PKG_USING_VBE_DRC
+#include "vbe_eq_drc_api.h"
+#define A2DP_VBE_OUT_BUFFER_SIZE     8192
+#endif
 uint8_t   bts2s_avsnk_openFlag;//0x00:dont open a2dp profile; 0x01:open a2dp profile;
 uint8_t   frms_per_payload;
 
@@ -346,6 +349,9 @@ static void decode_playback_thread(void *args)
     U8  is_stopped = 1;
     U8  debug_tx_cnt = 0;
     int  ret_write = 0;
+#if PKG_USING_VBE_DRC
+    uint32_t vbe_out_size;
+#endif
     g_playback_evt = rt_event_create("playback_evt", RT_IPC_FLAG_FIFO);
 
     while (1)
@@ -383,6 +389,12 @@ static void decode_playback_thread(void *args)
             debug_tx_cnt = 0;
             inst_data->snk_data.audio_client = audio_open(AUDIO_TYPE_BT_MUSIC, AUDIO_TX, &param, audio_bt_music_client_cb, NULL);
             is_stopped = 0;
+#if PKG_USING_VBE_DRC
+            inst_data->snk_data.vbe_out = rt_malloc(A2DP_VBE_OUT_BUFFER_SIZE);
+            RT_ASSERT(inst_data->snk_data.vbe_out);
+            inst_data->snk_data.vbe = vbe_drc_open(44100, 2, 16);
+            vbe_out_size = vbe_drc_process(inst_data->snk_data.vbe, (int16_t *)decode_data, decode_len / 2, (int16_t *)inst_data->snk_data.vbe_out, A2DP_VBE_OUT_BUFFER_SIZE);
+#endif
         }
         if (evt & PLAYBACK_GETDATA_EVENT_FLAG)
         {
@@ -412,7 +424,11 @@ static void decode_playback_thread(void *args)
 
         while (decode_len > 0)
         {
+#if PKG_USING_VBE_DRC
+            ret_write = audio_write(inst_data->snk_data.audio_client, inst_data->snk_data.vbe_out, vbe_out_size);
+#else
             ret_write = audio_write(inst_data->snk_data.audio_client, decode_data, decode_len);
+#endif
             if (ret_write < 0)
             {
                 USER_TRACE("playback write ret:%d\n", ret_write);
@@ -425,6 +441,9 @@ static void decode_playback_thread(void *args)
             else
             {
                 decode_data = play_data_decode(inst_data, &decode_len);
+#if PKG_USING_VBE_DRC
+                vbe_out_size = vbe_drc_process(inst_data->snk_data.vbe, (int16_t *)decode_data, decode_len / 2, (int16_t *)inst_data->snk_data.vbe_out, A2DP_VBE_OUT_BUFFER_SIZE);
+#endif
             }
         }
 
@@ -481,6 +500,12 @@ static void stop_audio_playback(bts2s_av_inst_data *inst)
         audio_close(inst->snk_data.audio_client);
         inst->snk_data.audio_client = NULL;
 #endif
+#if PKG_USING_VBE_DRC
+        vbe_drc_close(inst->snk_data.vbe);
+        rt_free(inst->snk_data.vbe_out);
+        inst->snk_data.vbe = NULL;
+        inst->snk_data.vbe_out = NULL;
+#endif
     }
 
     list_all_free(&(inst->snk_data.playlist));
@@ -507,6 +532,13 @@ static void stop_audio_playback_temporarily(bts2s_av_inst_data *inst)
         audio_close(inst->snk_data.audio_client);
         inst->snk_data.audio_client = NULL;
 #endif
+#if PKG_USING_VBE_DRC
+        vbe_drc_close(inst->snk_data.vbe);
+        rt_free(inst->snk_data.vbe_out);
+        inst->snk_data.vbe = NULL;
+        inst->snk_data.vbe_out = NULL;
+#endif
+
     }
 
     list_all_free(&(inst->snk_data.playlist));

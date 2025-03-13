@@ -255,6 +255,25 @@ extern "C" {
 #define UART4_TX_DMA_REQUEST            DMA_REQUEST_0
 #define UART4_TX_DMA_IRQ                DMAC2_CH1_IRQn
 #endif
+/* DMA2 channel1  */
+#if defined(BSP_PWM4_CC4_USING_DMA) && !defined(PWM4_CC4_DMA_INSTANCE)//GTIM3_CH4
+#define PWM4_CC4_DMA_IRQHandler              DMAC2_CH1_IRQHandler
+#define PWM4_CC4_DMA_IRQ_PRIO                1
+#define PWM4_CC4_DMA_INSTANCE                DMA2_Channel1
+#define PWM4_CC4_DMA_REQUEST                 DMA_REQUEST_13//GTIM3_CH4
+#define PWM4_CC4_DMA_IRQ                     DMAC2_CH1_IRQn
+#define PWM4_CC4_DMA_PDATAALIGN                       DMA_PDATAALIGN_HALFWORD
+#define PWM4_CC4_DMA_MDATAALIGN                       DMA_MDATAALIGN_HALFWORD
+#endif
+#if defined(BSP_PWM5_CC1_USING_DMA) && !defined(PWM5_CC1_DMA_INSTANCE)//GTIM4_CH1
+#define PWM5_CC1_DMA_IRQHandler              DMAC2_CH1_IRQHandler
+#define PWM5_CC1_DMA_IRQ_PRIO                1
+#define PWM5_CC1_DMA_INSTANCE                DMA2_Channel1
+#define PWM5_CC1_DMA_REQUEST                 DMA_REQUEST_26
+#define PWM5_CC1_DMA_IRQ                     DMAC2_CH1_IRQn
+#define PWM5_CC1_DMA_PDATAALIGN                       DMA_PDATAALIGN_HALFWORD
+#define PWM5_CC1_DMA_MDATAALIGN                       DMA_MDATAALIGN_HALFWORD
+#endif
 
 /* DMA2 channel2  */
 #if defined(BSP_UART4_RX_USING_DMA) && !defined(UART4_RX_DMA_INSTANCE)

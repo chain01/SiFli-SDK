@@ -85,7 +85,15 @@ extern "C" {
 #define I2C4_DMA_REQUEST                 DMA_REQUEST_1 //Reuse with MPI2's request
 #define I2C4_DMA_IRQ                     DMAC1_CH2_IRQn
 #endif
-
+#if defined(BSP_PWM2_CC2_USING_DMA) && !defined(PWM2_CC2_DMA_INSTANCE)
+#define PWM2_CC2_DMA_IRQHandler              DMAC1_CH2_IRQHandler
+#define PWM2_CC2_DMA_IRQ_PRIO                1
+#define PWM2_CC2_DMA_INSTANCE                DMA1_Channel3
+#define PWM2_CC2_DMA_REQUEST                 DMA_REQUEST_11
+#define PWM2_CC2_DMA_IRQ                     DMAC1_CH2_IRQn
+#define PWM2_CC2_DMA_PDATAALIGN                       DMA_PDATAALIGN_HALFWORD
+#define PWM2_CC2_DMA_MDATAALIGN                       DMA_MDATAALIGN_HALFWORD
+#endif
 
 /* DMA1 channel3 */
 #if defined(BSP_QSPI3_USING_DMA) && !defined(FLASH3_DMA_INSTANCE)
@@ -122,6 +130,8 @@ extern "C" {
 #define SPI1_RX_DMA_REQUEST            DMA_REQUEST_29
 #define SPI1_RX_DMA_IRQ                DMAC1_CH3_IRQn
 #endif
+
+
 
 
 /* DMA1 channel4 */
@@ -215,7 +225,16 @@ extern "C" {
 #define MIC_TX_DMA_REQUEST                 DMA_REQUEST_0
 #define MIC_TX_DMA_IRQ                     DMAC2_CH1_IRQn
 #endif
-
+//ATIM
+#if defined(BSP_PWMA2_CC4_USING_DMA) && !defined(PWMA2_CC4_DMA_INSTANCE)
+#define PWMA2_CC4_DMA_IRQHandler              DMAC2_CH1_IRQHandler
+#define PWMA2_CC4_DMA_IRQ_PRIO                1
+#define PWMA2_CC4_DMA_INSTANCE                DMA2_Channel1
+#define PWMA2_CC4_DMA_REQUEST                 DMA_REQUEST_30//atime2_cc4
+#define PWMA2_CC4_DMA_IRQ                     DMAC2_CH1_IRQn
+#define PWMA2_CC4_DMA_PDATAALIGN                        DMA_PDATAALIGN_WORD
+#define PWMA2_CC4_DMA_MDATAALIGN                        DMA_MDATAALIGN_WORD
+#endif
 // AUDPRC TX CH0
 #if defined(BSP_AUDPRC_TX0_DMA) && !defined(AUDPRC_TX0_DMA_INSTANCE)
 #define AUDPRC_TX0_DMA_IRQHandler              DMAC2_CH1_IRQHandler
@@ -423,6 +442,16 @@ extern "C" {
 #define SPI3_RX_DMA_INSTANCE           DMA3_Channel3
 #define SPI3_RX_DMA_REQUEST            DMA_REQUEST_17
 #define SPI3_RX_DMA_IRQ                DMAC3_CH3_IRQn
+#endif
+
+#if defined(BSP_PWM4_CC4_USING_DMA) && !defined(PWM4_CC4_DMA_INSTANCE)
+#define PWM4_CC4_DMA_IRQHandler              DMAC3_CH3_IRQHandler
+#define PWM4_CC4_DMA_IRQ_PRIO                1
+#define PWM4_CC4_DMA_INSTANCE                DMA3_Channel3
+#define PWM4_CC4_DMA_REQUEST                 DMA_REQUEST_13//gtim3_cc4
+#define PWM4_CC4_DMA_IRQ                     DMAC3_CH3_IRQn
+#define PWM4_CC4_DMA_PDATAALIGN                       DMA_PDATAALIGN_HALFWORD
+#define PWM4_CC4_DMA_MDATAALIGN                       DMA_MDATAALIGN_HALFWORD
 #endif
 
 /* DMA3 channel4  */

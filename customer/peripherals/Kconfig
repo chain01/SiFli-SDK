@@ -115,6 +115,14 @@ config LCD_USING_GC9C01
     bool
     default n
 
+config LCD_USING_CO5300
+    bool
+    default n
+
+config LCD_USING_CO5300_DUAL
+    bool
+    default n
+
 config LCD_USING_SPD2012
     bool
     default n

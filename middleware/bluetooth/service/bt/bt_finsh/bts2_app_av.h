@@ -304,6 +304,11 @@ typedef struct
 #if defined(AUDIO_USING_MANAGER) && defined(AUDIO_BT_AUDIO)
     audio_client_t audio_client;
 #endif
+#if PKG_USING_VBE_DRC
+    void *vbe;
+    uint8_t *vbe_out;
+#endif
+
     play_data_t *pt_curdata;
 } bts2s_avsnk_inst_data;
 #endif  // CFG_AV_SNK

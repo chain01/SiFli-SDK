@@ -4098,24 +4098,29 @@ static void dfu_image_offline_start_handler(dfu_ctrl_env_t *env, uint8_t *data, 
                 size = (size + align_size) / align_size * align_size;
             }
             LOG_I("dfu_image_offline_start_handler erase 0x%x, 0x%x", DFU_DOWNLOAD_REGION_START_ADDR, size);
+
             if (size > DFU_DOWNLOAD_REGION_SIZE)
             {
                 status = DFU_ERR_SPACE_NOT_ENOUGH;
                 break;
             }
+
             env->prog.all_length = req->file_len;
             env->prog.all_count = req->packet_count;
             env->prog.current_count = 0;
             env->prog.crc = req->crc_value;
+
             if (env->mb_handle)
             {
                 flash_write_offline_t *fwrite;
                 fwrite = rt_malloc(sizeof(flash_write_offline_t));
                 OS_ASSERT(fwrite);
+
                 fwrite->base_addr = DFU_DOWNLOAD_REGION_START_ADDR;
                 fwrite->offset = 0;
                 fwrite->size = size;
                 fwrite->msg_type = DFU_FLASH_MSG_TYPE_ERASE;
+
                 //LOG_I("fwrite %d, %d, 0x%x", fwrite->offset, fwrite->size, fwrite);
                 rt_mb_send(env->mb_handle, (rt_uint32_t)fwrite);
             }
@@ -4734,12 +4739,12 @@ void dfu_link_sync_start(uint8_t sync_type)
 
     if (sync_type == DFU_SYNC_TYPE_DOWNLOAD)
     {
-        os_timer_create(g_dfu_sync_timer, dfu_sync_timer_handler, NULL, OS_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        os_timer_create(g_dfu_sync_timer, dfu_sync_timer_handler, NULL, OS_TIMER_FLAG_ONE_SHOT | OS_TIMER_FLAG_SOFT);
         os_timer_start(g_dfu_sync_timer, DFU_SYNC_DOWNLOAD_TIMER);
     }
     else if (sync_type == DFU_SYNC_TYPE_RSP)
     {
-        os_timer_create(g_dfu_sync_timer, dfu_rsp_sync_handler, NULL, OS_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        os_timer_create(g_dfu_sync_timer, dfu_rsp_sync_handler, NULL, OS_TIMER_FLAG_ONE_SHOT | OS_TIMER_FLAG_SOFT);
         os_timer_start(g_dfu_sync_timer, DFU_SYNC_FILE_DOWNLOAD_TIMER);
     }
 }
@@ -4948,7 +4953,7 @@ void dfu_respond_start_request(dfu_event_ack_t result)
         if (env->ota_state.dfu_ID != DFU_ID_OTA_MANAGER)
         {
             env->is_reboot_timer_on = 1;
-            os_timer_create(g_dfu_timer, dfu_ctrl_reboot_handler, NULL, OS_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+            os_timer_create(g_dfu_timer, dfu_ctrl_reboot_handler, NULL, OS_TIMER_FLAG_ONE_SHOT | OS_TIMER_FLAG_SOFT);
             os_timer_start(g_dfu_timer, DFU_REBOOT_TIMER);
         }
     }
@@ -5052,7 +5057,7 @@ uint8_t dfu_ctrl_reset_handler(void)
     case DFU_CTRL_PREPARE_START:
     {
         /* Start timer to avoid corner case. */
-        os_timer_create(g_dfu_timer, dfu_ctrl_timer_handler, NULL, OS_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+        os_timer_create(g_dfu_timer, dfu_ctrl_timer_handler, NULL, OS_TIMER_FLAG_ONE_SHOT | OS_TIMER_FLAG_SOFT);
         os_timer_start(g_dfu_timer, DFU_PREPARE_START_TIMER);
     }
     break;

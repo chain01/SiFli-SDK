@@ -52,13 +52,11 @@
  * INCLUDE FILES
  ****************************************************************************************
     */
-#include <rtthread.h>
-#include <rtdevice.h>
+#include <rtconfig.h>
 #include <board.h>
 #ifdef BSP_USING_PC_SIMULATOR
     #include <stdint.h>
 #endif
-
 
 /**
  ****************************************************************************************
@@ -86,18 +84,34 @@
 
 #ifndef BSP_USING_PC_SIMULATOR
 #define SPACE1(x)                  __attribute__((section(x)))
+#ifndef ALIGN
+    #define ALIGN(n)                    __attribute__((aligned(n)))
+#endif
 #else
 #define SPACE1(x)                  __pragma(section(x, read)) \
                                         __declspec(allocate(x))
+#ifndef ALIGN
+    #define ALIGN(n)                    __declspec(align(n))
+#endif
 #define __PACKED_STRUCT            __pragma(pack(push, 1)) struct __pragma(pack(pop))
 #define __INLINE                   inline
 #define __WEAK
 #endif
 
-#undef BT_ASSERT
-#define BT_ASSERT(expr) RT_ASSERT(expr)
+#ifdef RT_DEBUG
+#define RW_ASSERT(EX)                                                         \
+if (!(EX))                                                                    \
+{                                                                             \
+    rw_assert_handler(#EX, __FUNCTION__, __LINE__);                           \
+}
+#else
+#define RW_ASSERT(expr)
+#endif
 
-#define BT_OOM_ASSERT(expr) RT_ASSERT(expr)
+#define BT_ASSERT(expr) RW_ASSERT(expr)
+#define BT_OOM_ASSERT(expr) RW_ASSERT(expr)
+#define RW_WAITING_FOREVER -1
+
 
 /**
  * @brief Register function proto type of #BLE_EVENT_REGISTER.
@@ -245,9 +259,9 @@ enum ble_power_off_type
 
 
 /**
- * @brief BT test operation for non-signaling mode.
+ * @brief BT test operation.
  */
-enum bt_ns_test_operation_t
+enum bt_test_operation_t
 {
     BT_TEST_OP_ENTER_TEST,            /**< Enter test mode. */
     BT_TEST_OP_EXIT_TEST,             /**< Exit test mode. */
@@ -404,13 +418,13 @@ typedef union
 
 typedef struct
 {
-    enum bt_ns_test_operation_t op;
+    enum bt_test_operation_t op;
     bt_ns_test_mode_cmd_para_t para;
 } bt_ns_test_mode_ctrl_cmd_t;
 
 typedef struct
 {
-    enum bt_ns_test_operation_t op;
+    enum bt_test_operation_t op;
     uint8_t status;
     bt_ns_test_mode_rsp_para_t para;
 } bt_ns_test_mode_ctrl_rsp_t;
@@ -532,6 +546,13 @@ char *bt_lib_get_ver(void);
 void bt_stack_nvds_update(void);
 
 
+/*Host Stack poring functions*/
+void rw_kprintf(const char *fmt, ...);
+void rw_assert_handler(const char *ex, const char *func, size_t line);
+uint32_t rw_tick_get_millisecond(void);
+uint32_t rw_tick_from_millisecond(int32_t ms);
+void rwip_timer_co_set(uint32_t target_bts);
+void rw_os_delay_ms(int ms);
 
 
 /**

@@ -1,0 +1,6 @@
+{
+    "cmake.sourceDirectory": "D:/code/SiFli-SDK/external/CMSIS/DSP_Lib/Source/CommonTables",
+    "files.associations": {
+        "includes.h": "c"
+    }
+}

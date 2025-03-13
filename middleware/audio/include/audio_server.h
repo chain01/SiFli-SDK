@@ -1,15 +1,20 @@
 #ifndef AUDIO_SERVER_H
 #define AUDIO_SERVER_H  1
-
+#include <rtthread.h>
 #include "audioproc.h"
 #include "audio_mem.h"
 
 #define AUDIO_DBG_LVL           LOG_LVL_INFO
 
+#define AUDIO_MAX_VOLUME        (15)
+
 /*
     !!!!! notice!!!!
     all API should called after INIT_ENV_EXPORT(audio_server_init)
 */
+#if SOFTWARE_TX_MIX_ENABLE
+    #define TWS_MIX_ENABLE              1
+#endif
 
 typedef struct
 {
@@ -24,6 +29,16 @@ typedef struct
     uint8_t tsco;
     uint16_t sample_rate;
 } audio_param_bt_voice_t;
+
+typedef struct
+{
+    void    *device_user_data;
+    struct rt_ringbuffer    *p_write_cache;
+    uint16_t tx_sample_rate;
+    uint16_t tx_channels;
+    uint16_t rx_sample_rate;
+    uint16_t rx_channels;
+} device_open_parameter_t;
 
 typedef enum
 {
@@ -76,7 +91,7 @@ typedef struct
     uint32_t write_cache_size;
     uint8_t  write_channnel_num;
     uint8_t  write_bits_per_sample;
-
+    uint8_t  is_need_3a;
     // read paramter, only invalid when rwflag is AUDIO_RX/AUDIO_TXRX
     uint32_t read_samplerate;
     uint32_t read_cache_size;
@@ -89,14 +104,15 @@ typedef enum
 {
     AUDIO_DEVICE_NO_INIT       = 255,
     AUDIO_DEVICE_NONE          = 254,
-    AUDIO_DEVICE_AUTIO         = 253,
-    AUDIO_DEVICE_SPEAKER       = 0, //here is source, peer is speaker
-    AUDIO_DEVICE_A2DP_SINK     = 1,
-    AUDIO_DEVICE_HFP           = 2,
-    AUDIO_DEVICE_I2S1          = 3,
+    AUDIO_DEVICE_AUTO          = 253,
+    AUDIO_DEVICE_SPEAKER       = 0, //audio output to speaker, or input from mic
+    AUDIO_DEVICE_A2DP_SINK     = 1, //audio output to tws
+    AUDIO_DEVICE_HFP           = 2, //local is AG, audio output to tws HFP
+    AUDIO_DEVICE_I2S1          = 3, //audio output to
     AUDIO_DEVICE_I2S2          = 4,
     AUDIO_DEVICE_PDM1          = 5,
     AUDIO_DEVICE_PDM2          = 6,
+    AUDIO_DEVICE_BLE_BAP_SINK  = 7, //local is ble audio src, output to ble bap sink device
     AUDIO_DEVICE_NUMBER
 } audio_device_e;
 
@@ -192,7 +208,17 @@ int audio_server_select_public_audio_device(audio_device_e audio_device);
   * @param  p_audio_device device parameter
   * @retval int 0 suscess, otehr failed
   */
-int audio_server_register_audio_device(audio_device_e audio_device, struct audio_device *p_audio_device);
+int audio_server_register_audio_device(audio_device_e audio_device, const struct audio_device *p_audio_device);
+
+
+
+/**
+  * @brief  Get the maximum volume
+  * @retval uint8_t maximum volume
+  */
+uint8_t audio_server_get_max_volume(void);
+
+
 
 /**
   * @brief  set public volume for all audio type

@@ -415,6 +415,11 @@ __HAL_ROM_USED HAL_StatusTypeDef HAL_PMU_LXTReady()
 {
     HAL_StatusTypeDef ret = HAL_OK;
 
+#ifdef FPGA
+    //rdy signal from analog£¬FPGA needn't check
+    return ret;
+#endif
+
     if (0 == (hwp_pmuc->LXT_CR & PMUC_LXT_CR_RDY))
     {
 #if 0

@@ -1861,12 +1861,32 @@ static void bt_hdl_menu_pan(bts2_app_stru *bts2_app_data)
     {
     case '1':
     {
-        bt_pan_conn(&(bts2_app_data->last_conn_bd));
+        BTS2S_BD_ADDR bd;
+        int reuslt = 0;
+        uint32_t mac[6];
+        reuslt = sscanf((const char *)bts2_app_data->input_str + 1, "%02X%02X%02X%02X%02X%02X", \
+                        &mac[0], &mac[1], \
+                        &mac[2], &mac[3], \
+                        &mac[4], &mac[5]);
+        bd.lap = (mac[3] << 16) | (mac[4] << 8) | mac[5];
+        bd.uap = (U8)mac[2];
+        bd.nap = (U16)((mac[0] << 8) | mac[1]);
+        bt_pan_conn(&bd);
         break;
     }
     case '2':
     {
-        bt_pan_disc(&(bts2_app_data->last_conn_bd));
+        BTS2S_BD_ADDR bd;
+        int reuslt = 0;
+        uint32_t mac[6];
+        reuslt = sscanf((const char *)bts2_app_data->input_str + 1, "%02X%02X%02X%02X%02X%02X", \
+                        &mac[0], &mac[1], \
+                        &mac[2], &mac[3], \
+                        &mac[4], &mac[5]);
+        bd.lap = (mac[3] << 16) | (mac[4] << 8) | mac[5];
+        bd.uap = (U8)mac[2];
+        bd.nap = (U16)((mac[0] << 8) | mac[1]);
+        bt_pan_disc(&bd);
         break;
     }
     case '3':
@@ -4902,7 +4922,7 @@ static void bt_hdl_menu_spp_srv_4(bts2_app_stru *bts2_app_data)
         device_id = bts2_app_data->input_str[0] - '0';
         srv_chl = bts2_app_data->input_str[1] - '0';
 #if RT_USING_DFS
-        bt_spp_srv_select_file_to_send(bts2_app_data, device_id, srv_chl);
+        bt_spp_srv_select_file_to_send(bts2_app_data, device_id, srv_chl, (char *)&bts2_app_data->input_str[2]);
 #else
         printf("DFS not enable!\n");
 #endif

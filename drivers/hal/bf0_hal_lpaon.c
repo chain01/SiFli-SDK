@@ -403,8 +403,12 @@ __HAL_ROM_USED  HAL_StatusTypeDef HAL_LPAON_GetWakeupPinMode(uint8_t wakeup_pin,
     return HAL_OK;
 }
 
-
-__HAL_ROM_USED void HAL_LPAON_ConfigStartAddr(uint32_t *start_addr)
+#ifdef SOC_BF0_HCPU
+    __weak
+#else
+    __HAL_ROM_USED
+#endif
+void HAL_LPAON_ConfigStartAddr(uint32_t *start_addr)
 {
     hwp_lpsys_aon->SPR = (*start_addr);
     start_addr++;

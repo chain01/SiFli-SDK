@@ -296,12 +296,12 @@ static void sibles_send_value_writecfm(uint8_t conn_idx, uint8_t hdl, uint8_t st
 
 }
 
-static void sibles_send_event_req_ind_cfm(sibles_event_ind_t *data)
+static void sibles_send_event_req_ind_cfm(sibles_event_ind_t *data, uint8_t conn_idx)
 {
     if (data->type == GATTC_INDICATE)
     {
         struct gattc_event_cfm *cfm = sifli_msg_alloc(GATTC_EVENT_CFM,
-                                      TASK_BUILD_ID(TASK_ID_GATTC, 0),
+                                      TASK_BUILD_ID(TASK_ID_GATTC, conn_idx),
                                       sifli_get_stack_id(),
                                       sizeof(struct gattc_event_cfm));
 
@@ -974,7 +974,7 @@ void sifli_mbox_process(sibles_msg_para_t *header, uint8_t *data_ptr, uint16_t p
         event_ind.length = ind->length;
         event_ind.handle = ind->handle;
         event_ind.value = ind->value;
-        sibles_send_event_req_ind_cfm(&event_ind);
+        sibles_send_event_req_ind_cfm(&event_ind, conn_idx);
         ble_event_publish(SIBLES_EVENT_REQ_IND, &event_ind, sizeof(sibles_event_ind_t));
         break;
     }

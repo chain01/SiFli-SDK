@@ -1394,8 +1394,6 @@ static HAL_StatusTypeDef LayerUpdate(LCDC_HandleTypeDef *lcdc)
             reg = (uint32_t)cfg->data;
         }
 
-        mpu_dcache_clean((uint32_t *)cfg->data, layer_1line_total_bytes * (cfg->data_area.y1 - cfg->data_area.y0 + 1));
-
 #ifndef SF32LB55X
         pHwLayerx->SRC = (HCPU_MPI_SBUS_ADDR(reg)) << LCD_IF_LAYER0_SRC_ADDR_Pos;
 #else

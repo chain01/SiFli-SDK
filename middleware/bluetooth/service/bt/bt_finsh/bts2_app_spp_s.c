@@ -401,13 +401,6 @@ void bt_spp_srv_data_ind_hdl(bts2_app_stru *bts2_app_data)
     bts2_spp_srv_inst = &bts2_app_data->spp_srv_inst[my_msg->device_id];
     spp_service_list = bt_spp_srv_get_service_list_by_srv_chl(bts2_spp_srv_inst, my_msg->srv_chl);
 
-
-#ifndef SOLUTION_WATCH
-    spp_id = my_msg->srv_chl + (bts2_spp_srv_inst->device_id + 1) * SPP_SRV_MAX_CONN_NUM;
-    spp_srv_data_rsp_ext(my_msg->device_id, my_msg->srv_chl);
-#endif
-
-
     if (write_into_file)
     {
         if (spp_service_list)
@@ -440,61 +433,64 @@ void bt_spp_srv_data_ind_hdl(bts2_app_stru *bts2_app_data)
     else
     {
 #ifndef SOLUTION_WATCH
+        if (spp_service_list)
         {
-            if (spp_service_list)
+            if (spp_service_list->receive_first_packet == 0)
             {
-                if (spp_service_list->receive_first_packet == 0)
-                {
-                    spp_service_list->counter = my_msg->payload_len;
-                    spp_service_list->start_timer = BTS2_GET_TIME();
-                    spp_service_list->timer_flag = TRUE;
-                    spp_service_list->receive_first_packet = 1;
-                    spp_service_list->time_id = bts2_timer_ev_add(TIME_WITH_NO_DATA, (void (*)(U16, void *)) bt_spp_srv_time_out, (U16)spp_id, (void *) bts2_app_data);
-                }
-                else
-                {
-                    bts2_timer_ev_cancel(spp_service_list->time_id, 0, NULL);
-                    spp_service_list->counter = my_msg->payload_len + spp_service_list->counter;
-                    spp_service_list->timer_flag = TRUE;
-                    spp_service_list->time_id = bts2_timer_ev_add(TIME_WITH_NO_DATA, (void (*)(U16, void *)) bt_spp_srv_time_out, (U16)spp_id, (void *) bts2_app_data);
-                }
-                // bt_spp_srv_sending_data_by_device_id_and_srv_chnl(bts2_app_data, my_msg->device_id, my_msg->srv_chl, my_msg->payload, my_msg->payload_len);
+                spp_service_list->counter = my_msg->payload_len;
+                spp_service_list->start_timer = BTS2_GET_TIME();
+                spp_service_list->timer_flag = TRUE;
+                spp_service_list->receive_first_packet = 1;
+                spp_service_list->time_id = bts2_timer_ev_add(TIME_WITH_NO_DATA, (void (*)(U16, void *)) bt_spp_srv_time_out, (U16)spp_id, (void *) bts2_app_data);
             }
-        }
-#else
-        {
-            if (spp_service_list)
+            else
             {
-#ifdef CFG_SPP_SRV
-                bt_notify_spp_data_ind_t *spp_data_info = (bt_notify_spp_data_ind_t *)bmalloc(sizeof(bt_notify_spp_data_ind_t) + my_msg->payload_len);
-                bt_addr_convert(&bts2_spp_srv_inst->bd_addr, spp_data_info->mac.addr);
-                spp_data_info->srv_chl = my_msg->srv_chl;
-                spp_data_info->uuid_len = my_msg->uuid_len;
-                if (spp_data_info->uuid_len == 2)
-                {
-                    bmemcpy(spp_data_info->uuid.uuid_16, my_msg->uuid, spp_data_info->uuid_len);
-                }
-                else if (spp_data_info->uuid_len == 4)
-                {
-                    bmemcpy(spp_data_info->uuid.uuid_32, my_msg->uuid, spp_data_info->uuid_len);
-                }
-                else if (spp_data_info->uuid_len == 16)
-                {
-                    bmemcpy(spp_data_info->uuid.uuid_128, my_msg->uuid, spp_data_info->uuid_len);
-                }
-                spp_data_info->payload_len = my_msg->payload_len;
-                bmemcpy(&(spp_data_info->payload), my_msg->payload, my_msg->payload_len);
-
-                bt_interface_bt_event_notify(BT_NOTIFY_SPP, BT_NOTIFY_SPP_DATA_IND, spp_data_info, sizeof(spp_data_info));
-                bfree(spp_data_info);
-#endif
+                bts2_timer_ev_cancel(spp_service_list->time_id, 0, NULL);
+                spp_service_list->counter = my_msg->payload_len + spp_service_list->counter;
+                spp_service_list->timer_flag = TRUE;
+                spp_service_list->time_id = bts2_timer_ev_add(TIME_WITH_NO_DATA, (void (*)(U16, void *)) bt_spp_srv_time_out, (U16)spp_id, (void *) bts2_app_data);
             }
+            // bt_spp_srv_sending_data_by_device_id_and_srv_chnl(bts2_app_data, my_msg->device_id, my_msg->srv_chl, my_msg->payload, my_msg->payload_len);
         }
 #endif
     }
 
+#ifdef CFG_SPP_SRV
     if (spp_service_list)
+    {
+        U8 is_flow_ctrl = 0;
+        bt_notify_spp_data_ind_t *spp_data_info = (bt_notify_spp_data_ind_t *)bmalloc(sizeof(bt_notify_spp_data_ind_t) + my_msg->payload_len);
+        bt_addr_convert(&bts2_spp_srv_inst->bd_addr, spp_data_info->mac.addr);
+        spp_data_info->srv_chl = my_msg->srv_chl;
+        spp_data_info->uuid_len = my_msg->uuid_len;
+        spp_data_info->is_flow_ctrl = &is_flow_ctrl;
+        if (spp_data_info->uuid_len == 2)
+        {
+            bmemcpy(spp_data_info->uuid.uuid_16, my_msg->uuid, spp_data_info->uuid_len);
+        }
+        else if (spp_data_info->uuid_len == 4)
+        {
+            bmemcpy(spp_data_info->uuid.uuid_32, my_msg->uuid, spp_data_info->uuid_len);
+        }
+        else if (spp_data_info->uuid_len == 16)
+        {
+            bmemcpy(spp_data_info->uuid.uuid_128, my_msg->uuid, spp_data_info->uuid_len);
+        }
+        spp_data_info->payload_len = my_msg->payload_len;
+        bmemcpy(&(spp_data_info->payload), my_msg->payload, my_msg->payload_len);
+
+        bt_interface_bt_event_notify(BT_NOTIFY_SPP, BT_NOTIFY_SPP_DATA_IND, spp_data_info, sizeof(spp_data_info));
+
+        if (!is_flow_ctrl)
+        {
+            spp_id = my_msg->srv_chl + (bts2_spp_srv_inst->device_id + 1) * SPP_SRV_MAX_CONN_NUM;
+            spp_srv_data_rsp_ext(my_msg->device_id, my_msg->srv_chl);
+        }
+
+        bfree(spp_data_info);
         spp_service_list->last_time = BTS2_GET_TIME();
+    }
+#endif
 
 
     // //!zhengyu:only for debug
@@ -903,7 +899,6 @@ void bt_spp_srv_msg_hdl(bts2_app_stru *bts2_app_data)
 
         if (spp_service_list)
         {
-#ifndef SOLUTION_WATCH
             {
                 if (spp_service_list->cur_file_hdl != NULL)
                 {
@@ -930,7 +925,7 @@ void bt_spp_srv_msg_hdl(bts2_app_stru *bts2_app_data)
 
                 }
             }
-#else
+
             {
 #ifdef CFG_SPP_SRV
                 bt_notify_spp_data_cfm_t spp_data_cfm;
@@ -953,7 +948,6 @@ void bt_spp_srv_msg_hdl(bts2_app_stru *bts2_app_data)
                 bt_interface_bt_event_notify(BT_NOTIFY_SPP, BT_NOTIFY_SPP_DATA_CFM, &spp_data_cfm, sizeof(spp_data_cfm));
 #endif
             }
-#endif
         }
         break;
     }
@@ -1128,10 +1122,11 @@ BOOL bt_spp_srv_check_addr_is_connected(bts2_app_stru *bts2_app_data, BTS2S_BD_A
     BOOL is_connected = FALSE;
 
     BT_SPP_DEBUG("[BT_SPP_DEBUG]bt_spp_srv_check_addr_is_connected\n");
+    INFO_TRACE("[spp_debug]bd = %04X:%02X:%06X\n", bd->nap, bd->uap, bd->lap);
 
     for (int i = 0; i < CFG_MAX_ACL_CONN_NUM; i++)
     {
-        if (0 == memcmp(&(bts2_app_data->spp_srv_inst[i].bd_addr), bd, sizeof(BTS2S_BD_ADDR)))
+        if (bd_eq(&(bts2_app_data->spp_srv_inst[i].bd_addr), bd) == TRUE)
         {
             is_connected = TRUE;
             *idx = i;
@@ -1571,7 +1566,7 @@ U8 bt_spp_srv_sending_random_data_next(bts2_spp_service_list *spp_service_list, 
  *
  *----------------------------------------------------------------------------*/
 #if RT_USING_DFS
-void bt_spp_srv_select_file_to_send(bts2_app_stru *bts2_app_data, U8 device_id, U8 srv_chl)
+void bt_spp_srv_select_file_to_send(bts2_app_stru *bts2_app_data, U8 device_id, U8 srv_chl, char *file_name)
 {
     bts2_spp_srv_inst_data *bts2_spp_srv_inst = NULL;
     bts2_spp_service_list *spp_service_list = NULL;
@@ -1591,7 +1586,7 @@ void bt_spp_srv_select_file_to_send(bts2_app_stru *bts2_app_data, U8 device_id, 
                 {
                     spp_service_list->file_name[i] = '\0';
                 }
-                bstrcpy(spp_service_list->file_name, (char *)&bts2_app_data->input_str[2]);
+                bstrcpy(spp_service_list->file_name, file_name);
                 bt_spp_srv_open_the_selected_file(bts2_app_data, device_id, srv_chl);
             }
         }

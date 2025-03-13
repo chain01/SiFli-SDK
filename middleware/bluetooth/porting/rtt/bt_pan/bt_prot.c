@@ -10,9 +10,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include "pbuf.h"
-//#include "bts2_app_demo.h"
-//#include "bnep.h"
+#include "lwip/pbuf.h"
 #include "rtdef.h"
 #include "bts2_bt.h"
 #include "bts2_app_pan.h"
@@ -72,31 +70,8 @@ rt_err_t rt_bt_prot_regisetr(struct rt_bt_prot *prot)
     /* save prot */
     bt_prot = prot;
 
-    // rt_kprintf("lwip:rt_bt_prot_regisetr \n");
-
     return RT_EOK;
 }
-
-
-/*rt_err_t rt_bt_prot_event_register(struct rt_bt_prot *prot, rt_bt_prot_event_t event, rt_bt_prot_event_handler handler)
-{
-   int i;
-
-   if ((prot == RT_NULL) || (handler == RT_NULL))
-   {
-       return -RT_EINVAL;
-   }
-
-  if (bt_prot_event_tab[event].handler == RT_NULL)
-   {
-       bt_prot_event_tab[event].handler = handler;
-       bt_prot_event_tab[event].prot = prot;
-       return RT_EOK;
-   }
-
-
-   return -RT_ERROR;
-}*/
 
 rt_err_t rt_bt_prot_event_unregister(struct rt_bt_prot *prot, rt_bt_prot_event_t event)
 {
@@ -106,14 +81,6 @@ rt_err_t rt_bt_prot_event_unregister(struct rt_bt_prot *prot, rt_bt_prot_event_t
     {
         return -RT_EINVAL;
     }
-
-    /*if ((bt_prot_event_tab[event].handler != RT_NULL) &&
-            (bt_prot_event_tab[event].prot == prot))
-    {
-        rt_memset(&bt_prot_event_tab[event], 0, sizeof(struct rt_bt_prot_event_des));
-        return RT_EOK;
-    }*/
-
 
     return -RT_ERROR;
 }

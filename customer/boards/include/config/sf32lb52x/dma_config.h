@@ -113,12 +113,14 @@ extern "C" {
 #define SPI1_TX_DMA_IRQ                DMAC1_CH3_IRQn
 #endif
 
-#if defined(BSP_USING_RGBLED_WITCH_PWM3_DMA) && !defined(PWM3_CC1_DMA_INSTANCE)
+#if defined(BSP_PWM3_CC1_USING_DMA) && !defined(PWM3_CC1_DMA_INSTANCE)//GTIM2_CH1
 #define PWM3_CC1_DMA_IRQHandler              DMAC1_CH3_IRQHandler
 #define PWM3_CC1_DMA_IRQ_PRIO                1
 #define PWM3_CC1_DMA_INSTANCE                DMA1_Channel3
-#define PWM3_CC1_DMA_REQUEST                 DMA_REQUEST_45
+#define PWM3_CC1_DMA_REQUEST                 DMA_REQUEST_45//GTIM2_CH1
 #define PWM3_CC1_DMA_IRQ                     DMAC1_CH3_IRQn
+#define PWM3_CC1_DMA_PDATAALIGN                       DMA_PDATAALIGN_HALFWORD
+#define PWM3_CC1_DMA_MDATAALIGN                       DMA_MDATAALIGN_HALFWORD
 #endif
 
 
@@ -138,7 +140,35 @@ extern "C" {
 #define AUDPRC_TX_OUT0_DMA_REQUEST                 DMA_REQUEST_47
 #define AUDPRC_TX_OUT0_DMA_IRQ                     DMAC1_CH4_IRQn
 #endif
-
+//ATIM1
+#if defined(BSP_PWMA1_CC1_USING_DMA) && !defined(PWMA1_CC1_DMA_INSTANCE)
+#define PWMA1_CC1_DMA_IRQHandler              DMAC1_CH4_IRQHandler
+#define PWMA1_CC1_DMA_IRQ_PRIO                1
+#define PWMA1_CC1_DMA_INSTANCE                DMA1_Channel4
+#define PWMA1_CC1_DMA_REQUEST                 DMA_REQUEST_18//atime1_cc1
+#define PWMA1_CC1_DMA_IRQ                     DMAC1_CH4_IRQn
+#define PWMA1_CC1_DMA_PDATAALIGN                       DMA_PDATAALIGN_WORD
+#define PWMA1_CC1_DMA_MDATAALIGN                       DMA_MDATAALIGN_WORD
+#endif
+//ATIM2
+#if defined(BSP_PWMA2_CC1_USING_DMA) && !defined(PWMA2_CC1_DMA_INSTANCE)
+#define PWMA2_CC1_DMA_IRQHandler              DMAC1_CH4_IRQHandler
+#define PWMA2_CC1_DMA_IRQ_PRIO                1
+#define PWMA2_CC1_DMA_INSTANCE                DMA1_Channel4
+#define PWMA2_CC1_DMA_REQUEST                 DMA_REQUEST_45
+#define PWMA2_CC1_DMA_IRQ                     DMAC1_CH4_IRQn
+#define PWMA2_CC1_DMA_PDATAALIGN                       DMA_PDATAALIGN_WORD
+#define PWMA2_CC1_DMA_MDATAALIGN                       DMA_MDATAALIGN_WORD
+#endif
+#if defined(BSP_PWMA2_CC4_USING_DMA) && !defined(PWMA2_CC4_DMA_INSTANCE)
+#define PWMA2_CC4_DMA_IRQHandler              DMAC2_CH1_IRQHandler
+#define PWMA2_CC4_DMA_IRQ_PRIO                1
+#define PWMA2_CC4_DMA_INSTANCE                DMA2_Channel1
+#define PWMA2_CC4_DMA_REQUEST                 DMA_REQUEST_30//atime2_cc4
+#define PWMA2_CC4_DMA_IRQ                     DMAC2_CH1_IRQn
+#define PWMA2_CC4_DMA_PDATAALIGN                       DMA_PDATAALIGN_WORD
+#define PWMA2_CC4_DMA_MDATAALIGN                       DMA_MDATAALIGN_WORD
+#endif
 // AUDPRC RX CH0
 #if defined(BSP_AUDPRC_RX0_DMA) && !defined(AUDPRC_RX0_DMA_INSTANCE)
 #define AUDPRC_RX0_DMA_IRQHandler              DMAC1_CH4_IRQHandler

@@ -483,6 +483,11 @@ static void boot_flash_power_on(void)
 #ifdef SOC_BF0_HCPU
     // Enable PADA
     HAL_HPAON_ENABLE_PAD();
+
+    HAL_PBR0_FORCE1_ENABLE();
+    HAL_PBR_ConfigMode(0, 1); //set PBR0 output
+    HAL_PBR_WritePin(0, 1); //set PBR0 high
+
 #endif /* SOC_BF0_HCPU */
 
 

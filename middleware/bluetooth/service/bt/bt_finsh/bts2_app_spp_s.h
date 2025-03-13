@@ -161,7 +161,7 @@ void bt_spp_srv_mode_change_req(bts2_app_stru *bts2_app_data, U8 device_id, U8 s
  *      none.
  *
  *----------------------------------------------------------------------------*/
-void bt_spp_srv_select_file_to_send(bts2_app_stru *bts2_app_data, U8 device_id, U8 srv_chl);
+void bt_spp_srv_select_file_to_send(bts2_app_stru *bts2_app_data, U8 device_id, U8 srv_chl, char *file_name);
 
 
 /*----------------------------------------------------------------------------*

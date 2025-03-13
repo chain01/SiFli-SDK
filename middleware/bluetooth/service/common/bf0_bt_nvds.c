@@ -1294,7 +1294,7 @@ static void sifli_trc_config(uint32_t config)
 {
 // TODO: Only 55x not support config HCI immediatelly. Lib has already supported, to avoid assert due to combination of new src and old lib. Just keep old src.
 // #if !defined(SOC_SF32LB55X)
-#if defined(SOC_SF32LB58X) || defined(SOC_SF32LB56X)
+#if (defined(SOC_SF32LB58X) || defined(SOC_SF32LB56X)) && !defined(ZBT)
     sibles_set_trc_cfg(SIBLES_TRC_CUSTOMIZE, config);
 #endif
     sifli_nvds_write_tag_t *update_tag = bt_mem_alloc(sizeof(sifli_nvds_write_tag_t) + NVDS_STACK_LEN_TRACER_CONFIG);
@@ -1908,7 +1908,7 @@ uint8_t sifli_nvds_flush(void)
 void sifli_nvds_init(void)
 {
     sifli_nvds_env_t *env = sifli_nvds_get_env();
-    os_sem_create(g_sible_nvds_sema, 0);
+    g_sible_nvds_sema = os_sem_create("nvds", 0);
     env->srv_handle = datac_open();
     OS_ASSERT(DATA_CLIENT_INVALID_HANDLE != env->srv_handle);
     datac_subscribe(env->srv_handle, "BLE_NV", sifli_nvds_callback, 0);

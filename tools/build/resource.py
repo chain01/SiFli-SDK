@@ -1042,8 +1042,13 @@ def BuildJLinkLoadScript(main_env):
     f.write(s)
     f.close()
 
-    uart_comment = '@echo off\ntitle=uart download\nset WORK_PATH=%~dp0\nset CURR_PATH=%cd%\ncd %WORK_PATH%\n:start\necho,\necho      \
-Uart Download\necho,\nset /p input=please input the serial port num:\ngoto download\n:download\necho com%input%\n'
+    uart_comment = '@echo off\ntitle=uart download\nset WORK_PATH=%~dp0\nset CURR_PATH=%cd%\ncd %WORK_PATH%\nset param=%1\n\nif "%param%" NEQ "" (\n'\
+'    if /I "%param:~0,3%"=="com" (\n'
+    uart_comment += MakeLine('        {} --func 0 --port %param% --baund 3000000 --loadram 1 --postact 1 --device {} \
+--file ImgBurnList.ini --log ImgBurn.log\n        if !errorlevel!==0 (\n            echo Download Successful\n        ) else (\n            echo Download \
+Failed\n            echo logfile:%WORK_PATH%ImgBurn.log\n        )\n        cd %CURR_PATH%\n        goto:EOF\n    ) else (\n        echo Illegal parameter, \
+must start with com or COM string.\n        cd %CURR_PATH%\n        goto:EOF\n    )\n)'.format(ImgDownUart_PATH, main_env['JLINK_DEVICE']))
+    uart_comment += ':start\necho,\necho      Uart Download\necho,\nset /p input=please input the serial port num:\ngoto download\n:download\necho com%input%\n'
     uart_comment += MakeLine('{} --func 0 --port com%input% --baund 3000000 --loadram 1 --postact 1 --device {} \
 --file ImgBurnList.ini --log ImgBurn.log\nif %errorlevel%==0 (\n    echo Download Successful\n)else (\n    echo Download Failed\n    \
 echo logfile:%WORK_PATH%ImgBurn.log\n)\ncd %CURR_PATH%\n'.format(ImgDownUart_PATH, main_env['JLINK_DEVICE']))

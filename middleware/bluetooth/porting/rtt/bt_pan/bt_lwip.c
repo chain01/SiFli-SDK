@@ -15,7 +15,7 @@
 #include "bts2_app_pan.h"
 #include "bt_lwip.h"
 #include "bt_prot.h"
-#include "pbuf.h"
+#include "lwip/pbuf.h"
 #include "bts2_app_demo.h"
 
 #include "rtdef.h"
@@ -84,35 +84,12 @@ static void rt_bt_lwip_event_handle(struct rt_bt_prot *port, struct rt_bt_pan_in
         break;
     }
     }
-    //if (flag_old != lwip_prot->connected_flag)
-    //{
-
-    //rt_wlan_workqueue_dowork(netif_set_connected, wlan);???replace
-    //netif_set_connected(wlan);
-    //}
 }
-
-/*BTS2S_ETHER_ADDR bt_pan_get_remote_mac_address(struct rt_bt_pan_instance *bt_instance)
-{
-    BTS2S_ETHER_ADDR   remote_ether_addr;
-    rt_kprintf("lwip:remote address app pointer %x \n",bt_instance->bts2_app_data);
-    remote_ether_addr = bts2_remote_ether_addr;
-    rt_kprintf("lwip:inner remote_addr w[0]%04X w[1]%04X w[2] %04X \n",bts2_remote_ether_addr.w[0]\
-    , bts2_remote_ether_addr.w[1], bts2_remote_ether_addr.w[2]);
-    return remote_ether_addr;
-}*/
-
 
 BTS2S_ETHER_ADDR bt_pan_get_mac_address(struct rt_bt_pan_instance *bt_instance)
 {
     BTS2S_ETHER_ADDR   local_ether_addr;
-    //rt_kprintf("lwip:local address app pointer %x \n",bt_instance->bts2_app_data);
     local_ether_addr = bts2_local_ether_addr;
-    //rt_kprintf("lwip:inner src_addr w[0]%04X w[1]%04X w[2] %04X \n",bts2_local_ether_addr.w[0]\
-    , bts2_local_ether_addr.w[1], bts2_local_ether_addr.w[2]);
-
-
-
     return local_ether_addr;
 }
 
@@ -315,6 +292,7 @@ static struct rt_bt_prot *rt_bt_lwip_protocol_register(struct rt_bt_prot *prot, 
         }
         rt_memcpy(&lwip_prot->prot, prot, sizeof(struct rt_bt_prot));
         netif_set_up(eth->netif);
+        netif_set_link_up(eth->netif);
     }
     else
     {

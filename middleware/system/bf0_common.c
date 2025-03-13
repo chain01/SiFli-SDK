@@ -414,7 +414,7 @@ static void lcpu_patch_install_select()
     lcpu_patch_install();
 #endif // BSP_CHIP_ID_COMPATIBLE
         /***************SF32LB55X end******************/
-#elif defined(SF32LB52X_58)
+#elif defined(LCPU_RUN_SEPERATE_IMG)
     // Donothing
 #elif defined(SF32LB52X)
     /***************SF32LB52X start******************/
@@ -491,6 +491,7 @@ static void lcpu_ble_patch_install()
 // rf cal used em memory, to avoid wrongly init value bring wrongly result, just clear the section.
 #if defined(SF32LB56X)
     memset((void *)0x20418000, 0, 0x5000);
+    memset((void *)0x2041fc00, 0, 0x100);
 #elif defined(SF32LB52X)
     memset((void *)0x20408000, 0, 0x5000);
 #endif
@@ -582,7 +583,7 @@ uint8_t lcpu_power_on(void)
     if (rev_id < HAL_CHIP_REV_ID_A4)
 #endif // SF32LB52X
     {
-#if !defined(SF32LB52X) || (defined(SF32LB52X) && !defined(SF32LB52X_REV_B))
+#if (!defined(SF32LB52X) || (defined(SF32LB52X) && !defined(SF32LB52X_REV_B))) && !defined(LCPU_RUN_ROM_ONLY)
         lcpu_img_install();
 #endif // !defined(SF32LB52X) || (defined(SF32LB52X) && !defined(SF32LB52X_REV_B))
     }
@@ -769,35 +770,35 @@ __ROM_USED void print_sysinfo(char *buf, uint32_t buf_len)
 
     if (buf)  memset(buf, 0, buf_len);
 
-    print_clk_str(buf, buf_len,   "HPSYS\nSYSCLK: "HUMAN_FORMAT"\n", clk_setting.hpsys_clk.sysclk);
-    print_clk_str(buf, buf_len,   "HCLK: "HUMAN_FORMAT"\n", clk_setting.hpsys_clk.hclk);
-    print_clk_str(buf, buf_len,   "PCLK1: "HUMAN_FORMAT"\n", clk_setting.hpsys_clk.pclk1);
-    print_clk_str(buf, buf_len,   "PCLK2: "HUMAN_FORMAT"\n", clk_setting.hpsys_clk.pclk2);
+    print_clk_str(buf, buf_len,   "HPSYS\nSYSCLK: "HUMAN_FORMAT"Hz\n", clk_setting.hpsys_clk.sysclk);
+    print_clk_str(buf, buf_len,   "HCLK: "HUMAN_FORMAT"Hz\n", clk_setting.hpsys_clk.hclk);
+    print_clk_str(buf, buf_len,   "PCLK1: "HUMAN_FORMAT"Hz\n", clk_setting.hpsys_clk.pclk1);
+    print_clk_str(buf, buf_len,   "PCLK2: "HUMAN_FORMAT"Hz\n", clk_setting.hpsys_clk.pclk2);
 
 
-    print_clk_str(buf, buf_len,   "\nLPSYS\nSYSCLK: "HUMAN_FORMAT"\n", clk_setting.lpsys_clk.sysclk);
-    print_clk_str(buf, buf_len,   "HCLK: "HUMAN_FORMAT"\n", clk_setting.lpsys_clk.hclk);
-    print_clk_str(buf, buf_len,   "PCLK1: "HUMAN_FORMAT"\n", clk_setting.lpsys_clk.pclk1);
-    print_clk_str(buf, buf_len,   "PCLK2: "HUMAN_FORMAT"\n", clk_setting.lpsys_clk.pclk2);
+    print_clk_str(buf, buf_len,   "\nLPSYS\nSYSCLK: "HUMAN_FORMAT"Hz\n", clk_setting.lpsys_clk.sysclk);
+    print_clk_str(buf, buf_len,   "HCLK: "HUMAN_FORMAT"Hz\n", clk_setting.lpsys_clk.hclk);
+    print_clk_str(buf, buf_len,   "PCLK1: "HUMAN_FORMAT"Hz\n", clk_setting.lpsys_clk.pclk1);
+    print_clk_str(buf, buf_len,   "PCLK2: "HUMAN_FORMAT"Hz\n", clk_setting.lpsys_clk.pclk2);
 
 
-    print_clk_str(buf, buf_len,   "\nBLESYS\nSYSCLK: "HUMAN_FORMAT"\n", clk_setting.blesys_clk.sysclk);
-    print_clk_str(buf, buf_len,   "HCLK: "HUMAN_FORMAT"\n", clk_setting.blesys_clk.hclk);
+    print_clk_str(buf, buf_len,   "\nBLESYS\nSYSCLK: "HUMAN_FORMAT"Hz\n", clk_setting.blesys_clk.sysclk);
+    print_clk_str(buf, buf_len,   "HCLK: "HUMAN_FORMAT"Hz\n", clk_setting.blesys_clk.hclk);
 
 
 #ifdef SF32LB55X
 #if  ((defined BSP_USING_FLASH)||(defined BSP_USING_SPI_FLASH))
-    print_clk_str(buf, buf_len,   "\nMemory\nFLASH1: "HUMAN_FORMAT"\n", clk_setting.flash1_clk);
-    print_clk_str(buf, buf_len,   "FLASH2: "HUMAN_FORMAT"\n", clk_setting.flash2_clk);
+    print_clk_str(buf, buf_len,   "\nMemory\nFLASH1: "HUMAN_FORMAT"Hz\n", clk_setting.flash1_clk);
+    print_clk_str(buf, buf_len,   "FLASH2: "HUMAN_FORMAT"Hz\n", clk_setting.flash2_clk);
 #if ((defined BSP_ENABLE_FLASH3) || (defined BSP_ENABLE_QSPI3))
-    print_clk_str(buf, buf_len,   "FLASH3: "HUMAN_FORMAT"\n", clk_setting.flash3_clk);
+    print_clk_str(buf, buf_len,   "FLASH3: "HUMAN_FORMAT"Hz\n", clk_setting.flash3_clk);
 #endif  /* BSP_ENABLE_FLASH3 */
 #if ((defined BSP_ENABLE_FLASH4) || (defined BSP_ENABLE_QSPI4))
-    print_clk_str(buf, buf_len,   "FLASH4: "HUMAN_FORMAT"\n", clk_setting.flash4_clk);
+    print_clk_str(buf, buf_len,   "FLASH4: "HUMAN_FORMAT"Hz\n", clk_setting.flash4_clk);
 #endif  /* BSP_ENABLE_FLASH4 */
 #endif /* BSP_USING_NOR_FLASH */
 #ifdef BSP_USING_PSRAM
-    print_clk_str(buf, buf_len,   "PSRAM: "HUMAN_FORMAT"\n", clk_setting.psram_clk);
+    print_clk_str(buf, buf_len,   "PSRAM: "HUMAN_FORMAT"Hz\n", clk_setting.psram_clk);
 #endif /* BSP_USING_PSRAM */
 
 #else
@@ -805,19 +806,19 @@ __ROM_USED void print_sysinfo(char *buf, uint32_t buf_len)
     print_clk_str(buf, buf_len,   "\nMemory\n", 0);
 
 #if  defined (BSP_ENABLE_MPI1)
-    print_clk_str(buf, buf_len,   "MPI1: "HUMAN_FORMAT"\n", clk_setting.mpi1_clk);
+    print_clk_str(buf, buf_len,   "MPI1: "HUMAN_FORMAT"Hz\n", clk_setting.mpi1_clk);
 #endif /* BSP_ENABLE_MPI1 */
 #if  defined (BSP_ENABLE_MPI2)
-    print_clk_str(buf, buf_len,   "MPI2: "HUMAN_FORMAT"\n", clk_setting.mpi2_clk);
+    print_clk_str(buf, buf_len,   "MPI2: "HUMAN_FORMAT"Hz\n", clk_setting.mpi2_clk);
 #endif /* BSP_ENABLE_MPI2 */
 #if  defined (BSP_ENABLE_MPI3)
-    print_clk_str(buf, buf_len,   "MPI3: "HUMAN_FORMAT"\n", clk_setting.mpi3_clk);
+    print_clk_str(buf, buf_len,   "MPI3: "HUMAN_FORMAT"Hz\n", clk_setting.mpi3_clk);
 #endif /* BSP_ENABLE_MPI3 */
 #if  defined (BSP_ENABLE_MPI4)
-    print_clk_str(buf, buf_len,   "MPI4: "HUMAN_FORMAT"\n", clk_setting.mpi4_clk);
+    print_clk_str(buf, buf_len,   "MPI4: "HUMAN_FORMAT"Hz\n", clk_setting.mpi4_clk);
 #endif /* BSP_ENABLE_MPI4 */
 #if  defined (BSP_ENABLE_MPI5)
-    print_clk_str(buf, buf_len,   "MPI5: "HUMAN_FORMAT"\n", clk_setting.mpi5_clk);
+    print_clk_str(buf, buf_len,   "MPI5: "HUMAN_FORMAT"Hz\n", clk_setting.mpi5_clk);
 #endif /* BSP_ENABLE_MPI5 */
 
 
@@ -892,7 +893,7 @@ void *sifli_memset(void *s, int c, rt_ubase_t count)
             if (res != 0)
                 break;
 
-            res = EXT_DMA_TRANS_SYNC((uint32_t)buffer, (uint32_t)aligned_addr, fill / 4, 1000);
+            res = EXT_DMA_TRANS_SYNC((uint32_t)&buffer, (uint32_t)aligned_addr, fill / 4, 1000);
             if (res == 0)
             {
                 aligned_addr += fill / 4;

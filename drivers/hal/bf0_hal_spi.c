@@ -239,19 +239,20 @@ __HAL_ROM_USED HAL_StatusTypeDef HAL_SPI_Init(SPI_HandleTypeDef *hspi)
         }
     }
 #endif
-
-    if (1 == hspi->Init.BaudRatePrescaler)
-    {
-        WRITE_REG(hspi->Instance->CLK_CTRL, SPI_CLK_CTRL_CLK_SEL);
-    }
-    else
-    {
-        WRITE_REG(hspi->Instance->CLK_CTRL, hspi->Init.BaudRatePrescaler);
-    }
-
+    /*for 56x, need enable clock first, then set div.*/
 #ifdef SPI_CLK_CTRL_CLK_SSP_EN
     SET_BIT(hspi->Instance->CLK_CTRL, SPI_CLK_CTRL_CLK_SSP_EN);
 #endif /* SPI_CLK_CTRL_CLK_SSP_EN */
+
+    if (1 == hspi->Init.BaudRatePrescaler)
+    {
+        SET_BIT(hspi->Instance->CLK_CTRL, SPI_CLK_CTRL_CLK_SEL);
+    }
+    else
+    {
+        MODIFY_REG(hspi->Instance->CLK_CTRL, SPI_CLK_CTRL_CLK_DIV_Msk,
+                   MAKE_REG_VAL(hspi->Init.BaudRatePrescaler, SPI_CLK_CTRL_CLK_DIV_Msk, SPI_CLK_CTRL_CLK_DIV_Pos));
+    }
 
     if (SPI_MODE_MASTER == hspi->Init.Mode)
     {

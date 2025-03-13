@@ -115,6 +115,10 @@ config RT_USING_PWM
     bool "Using PWM device drivers"
     default n
 
+config RT_USING_PULSE_ENCODER
+    bool "Using encoder device drivers"
+    default n
+
 config RT_USING_MTD_NOR
     bool "Using MTD Nor Flash device drivers"
     default n
@@ -128,6 +132,11 @@ config RT_USING_MTD_NAND
         bool "Enable MTD Nand operations debug information"
         default n
     endif
+
+config RT_USING_MTD_DHARA
+    bool "Using MTD Dhara Nand Flash device drivers"
+    depends on RT_USING_MTD_NAND
+    default n
 
 menuconfig RT_USING_PM
     bool "Using Power Management device drivers"

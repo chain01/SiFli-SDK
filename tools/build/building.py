@@ -2106,6 +2106,7 @@ def SifliMsvcEnv(cpu):
     rtconfig.TARGET_EXT = 'exe'
     rtconfig.AS = rtconfig.PREFIX + 'cl'
     rtconfig.CC = rtconfig.PREFIX + 'cl'
+    rtconfig.CXX = rtconfig.PREFIX + 'cl'
     rtconfig.AR = rtconfig.PREFIX + 'lib'
     rtconfig.LINK = rtconfig.PREFIX + 'link'
        
@@ -2124,6 +2125,8 @@ def SifliMsvcEnv(cpu):
     rtconfig.CFLAGS += ' /Zi /Od /W 3 /WL /D_Win32 /wd4828 /FS /utf-8 /nologo '        
     rtconfig.LFLAGS += ' /SUBSYSTEM:CONSOLE /MACHINE:X86 /INCREMENTAL:NO /nologo '
     rtconfig.LFLAGS += '/PDB:"build\\rtthread.pdb" /DEBUG /ignore:4099 '
+
+    rtconfig.CXXFLAGS = rtconfig.CFLAGS
 
     rtconfig.CPATH = ''
     rtconfig.LPATH = ''
@@ -2362,6 +2365,7 @@ def SifliKeilEnv(cpu, BSP_ROOT=''):
     rtconfig.AFLAGS += ' --diag_suppress=A1609 '
 
     rtconfig.CXXFLAGS = rtconfig.CFLAGS + ' -xc++ -std=c++14 -fno-exceptions ' 
+    rtconfig.CXXFLAGS += ' -I' + rtconfig.EXEC_PATH + '/ARM/ARMCLANG/include/libcxx'
     rtconfig.CCFLAGS =  rtconfig.CFLAGS
     rtconfig.CFLAGS = rtconfig.CFLAGS + ' -xc -std=c99 '
     rtconfig.LFLAGS = ' --cpu=' + asm_cpu 

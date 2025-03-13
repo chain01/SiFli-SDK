@@ -301,7 +301,7 @@ void ble_nvds_config_prepare()
 #define SIFLI_NVDS_UPDATING 2
 
 #if defined(SOC_SF32LB58X)
-    #ifdef SF32LB58X_3SCO
+    #ifdef NVDS_BUF_START_ADDR
         #define NVDS_BUFF_START NVDS_BUF_START_ADDR
     #else
         #define NVDS_BUFF_START 0x204FFD00
@@ -969,6 +969,11 @@ void bt_event_publish(uint16_t type, uint16_t event_id, void *data)
     }
 
 #endif
+}
+
+RT_WEAK void blebredr_rf_power_set(uint8_t type, int8_t txpwr)
+{
+    return;
 }
 
 #ifndef SOC_SF32LB55X

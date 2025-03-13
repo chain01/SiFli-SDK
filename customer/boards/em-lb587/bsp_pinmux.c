@@ -45,6 +45,36 @@
 #include "bsp_board.h"
 #include "bf0_hal_pinmux.h"
 
+#ifdef BSP_USING_SDHCI1
+void BSP_sd1_pinmux_config()
+{
+    HAL_PIN_Set(PAD_PA39, SD1_CLK, PIN_NOPULL, 1);
+    HAL_PIN_Set(PAD_PA41, SD1_DIO0, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA30, SD1_DIO1, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA36, SD1_DIO2, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA40, SD1_DIO3, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA38, SD1_DIO4, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA37, SD1_DIO5, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA35, SD1_DIO6, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA33, SD1_DIO7, PIN_NOPULL, 1);
+    HAL_PIN_Set(PAD_PA34, SD1_CMD, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA49, GPIO_A49, PIN_PULLUP, 1);     // SD1 RESET, need set 0 first?
+    HAL_PIN_Set(PAD_PA80, GPIO_A80, PIN_PULLUP, 1);     // SD1 EN
+}
+#endif
+#ifdef BSP_USING_SDHCI2
+void BSP_sd2_pinmux_config()
+{
+    HAL_PIN_Set(PAD_PA70, SD2_CMD,  PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA75, SD2_DIO1, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA76, SD2_DIO0, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA77, SD2_CLK,  PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA79, SD2_DIO2, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA81, SD2_DIO3, PIN_PULLUP, 1);
+    HAL_PIN_Set(PAD_PA58, GPIO_A58, PIN_NOPULL, 1);     // SD1 card detect pin
+}
+#endif
+
 void BSP_PIN_Init(void)
 {
 #ifdef SOC_BF0_HCPU
@@ -167,36 +197,7 @@ void BSP_PIN_Init(void)
     HAL_PIN_Set(PAD_PA28, USART2_TXD, PIN_NOPULL, 1);
     HAL_PIN_Set(PAD_PA29, USART2_RXD, PIN_PULLUP, 1);
 
-    // SDIO
-#ifdef BSP_USING_SDIO
 
-#if 0
-    HAL_PIN_Set(PAD_PA09, SD1_CLK, PIN_NOPULL, 1); // SDIO1
-    HAL_PIN_Set(PAD_PA10, SD1_CMD, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA05, SD1_DIO0, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA04, SD1_DIO1, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA01, SD1_DIO2, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA06, SD1_DIO3, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA07, SD1_DIO4, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA03, SD1_DIO5, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA08, SD1_DIO6, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA00, SD1_DIO7, PIN_PULLUP, 1);
-
-    HAL_PIN_Set(PAD_PA02, GPIO_A2, PIN_PULLUP, 1);     // SD1 EN
-    //BSP_GPIO_Set(2, 1, 1);
-    HAL_PIN_Set(PAD_PA11, GPIO_A11, PIN_PULLUP, 1);     // SD1 RESET, need set 0 first?
-    //BSP_GPIO_Set(11, 1, 1);
-#endif
-
-
-    HAL_PIN_Set(PAD_PA70, SD2_CMD,  PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA75, SD2_DIO1, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA76, SD2_DIO0, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA77, SD2_CLK,  PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA79, SD2_DIO2, PIN_PULLUP, 1);
-    HAL_PIN_Set(PAD_PA81, SD2_DIO3, PIN_PULLUP, 1);
-
-#endif// SDIO
 
     // LCDC1
 #if 0//def BSP_LCDC_USING_DBI
@@ -279,6 +280,15 @@ void BSP_PIN_Init(void)
     HAL_PIN_Set(PAD_PA42, GPTIM2_CH4, PIN_NOPULL, 1); //LCD backlight PWM( DSI&DPI LCD)
 
 
+    /*SDHCI1 config*/
+#ifdef BSP_USING_SDHCI1
+    BSP_sd1_pinmux_config();
+#endif
+
+    /*SDHCI2 config*/
+#ifdef BSP_USING_SDHCI2
+    BSP_sd2_pinmux_config();
+#endif
     if (PM_STANDBY_BOOT != SystemPowerOnModeGet())
     {
         HAL_PBR0_FORCE1_ENABLE();

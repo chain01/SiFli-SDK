@@ -52,8 +52,7 @@
  * INCLUDE FILES
  ****************************************************************************************
     */
-#include <rtthread.h>
-#include <rtdevice.h>
+#include <rtconfig.h>
 #include <board.h>
 #ifdef BSP_USING_PC_SIMULATOR
     #include <stdbool.h>
