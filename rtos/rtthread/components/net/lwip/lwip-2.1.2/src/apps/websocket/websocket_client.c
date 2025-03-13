@@ -278,7 +278,7 @@ wsock_connect(wsock_state_t *pws,    uint16_t len, const char *srvname, const ch
     }
 
     if (wsverbose)
-        printf("HANDSHAKE: %s\n", pws->request->payload);
+        printf("HANDSHAKE: %s\n", (char *)pws->request->payload);
     RT_ASSERT(strlen(buf) <= len)
 
     pws->request->len = strlen(buf) + 1;
