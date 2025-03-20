@@ -1434,13 +1434,13 @@ int bt_cm_hci_event_handler(uint16_t event_id, uint8_t *msg)
 
                 bt_cm_add_bonded_dev(&conn->info, 1);
 #ifdef BT_AUTO_CONNECT_LAST_DEVICE
-                if (ind->incoming)
-                {
-                    conn->tim_hdl = rt_timer_create("btcm_con", bt_cm_conn_timeout, conn,
-                                                    rt_tick_from_millisecond(BT_CM_MAX_TIMEOUT), RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+                // if (ind->incoming)
+                // {
+                //     conn->tim_hdl = rt_timer_create("btcm_con", bt_cm_conn_timeout, conn,
+                //                                     rt_tick_from_millisecond(BT_CM_MAX_TIMEOUT), RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
 
-                    rt_timer_start(conn->tim_hdl);   //start the timer,when gap receive BTS2MU_GAP_RMT_SMC_IND
-                }
+                //     rt_timer_start(conn->tim_hdl);   //start the timer,when gap receive BTS2MU_GAP_RMT_SMC_IND
+                // }
 #endif
             }
         }
