@@ -139,7 +139,7 @@ static rt_err_t rt_bt_lwip_protocol_recv(struct rt_bt_pan_instance *bt_instance,
     struct eth_device *eth_dev = &((struct bt_lwip_prot_des *)bt_instance->prot)->eth;
     struct pbuf *p = RT_NULL;
 
-    LOG_D("F:%s L:%d run", __FUNCTION__, __LINE__);
+    // LOG_D("F:%s L:%d run", __FUNCTION__, __LINE__);
 
     if (eth_dev == RT_NULL)
     {
@@ -179,7 +179,7 @@ static rt_err_t rt_bt_lwip_protocol_recv(struct rt_bt_pan_instance *bt_instance,
         p = RT_NULL;
     }
 
-    LOG_D("F:%s L:%d netif iput success! len:%d", __FUNCTION__, __LINE__, len);
+    // LOG_D("F:%s L:%d netif iput success! len:%d", __FUNCTION__, __LINE__, len);
     return RT_EOK;
 
 }
