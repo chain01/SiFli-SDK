@@ -1,7 +1,7 @@
 function note: 
 
 1) eZIP cfile generate:
-		- CMD: ezip -convert xxx\xxx.png -rgb565 -cfile 2  -section ROM1_IMG -detailcf
+		- CMD: ezip -convert xxx\xxx.png -rgb565 -cfile 2  -section ROM1_IMG -detailcf -lvgl_version 9
      		usage: it will generate a ezip cfile. this cmd  only convert one file. default -rgb565
      	
 		- CMD: ezip -dir xxx -rgb565 -cfile 2  -section ROM1_IMG -detailcf

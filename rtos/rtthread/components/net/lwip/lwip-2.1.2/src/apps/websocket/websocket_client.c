@@ -500,7 +500,7 @@ err_t wsock_close(wsock_state_t *pws, wsock_result_t result, err_t err)
     if (pws->tcp_state == WS_TCP_CLOSED)
     {
         printf("wsock_close() TCP already closed\n");
-        return ERR_CLSD;
+        // return ERR_CLSD;
     }
 
     if (!(pws->pcb &&
@@ -508,7 +508,7 @@ err_t wsock_close(wsock_state_t *pws, wsock_result_t result, err_t err)
             (pws->state1 == PWS_STATE_INITD)))
     {
         printf("wsock_close() passed invalid wsock_state_t struct\n");
-        return ERR_ABRT;
+        // return ERR_ABRT;
     }
 
     /* LWIP_ASSERT("pws != NULL", pws != NULL);
