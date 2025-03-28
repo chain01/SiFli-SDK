@@ -17,6 +17,10 @@ config TSC_USING_FT6336
     bool
     default n
 
+config TSC_USING_FT6146
+    bool
+    default n
+
 config TSC_USING_FT3168
     bool
     default n
