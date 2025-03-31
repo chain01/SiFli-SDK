@@ -1215,12 +1215,13 @@ def PrepareBuilding(env, has_libcpu=False, remove_components = []):
         rtconfig.POST_ACTION = ''
 
     if GetOption('compiledb'):
-        env.Replace(
-        CC   = 'clang',
-        CXX  = 'clang++',
-        # skip as and link
-        LINK = 'true',
-        AS   = 'true',)    
+        pass
+        # env.Replace(
+        # CC   = 'clang',
+        # CXX  = 'clang++',
+        # # skip as and link
+        # LINK = 'true',
+        # AS   = 'true',)    
 
     # generate cconfig.h file
     GenCconfigFile(env, BuildOptions)
@@ -1452,7 +1453,6 @@ def InitBuild(bsp_root, build_dir, board):
         retcode = subprocess.call(['python', KCONFIG_PATH, '--handwritten-input-configs', os.path.join(build_dir, 'Kconfig'),
                          os.path.join(build_dir, '.config'), os.path.join(build_dir, "rtconfig.h"),
                          os.path.join(build_dir, "kconfiglist")] + conf_list)
-    logging.error("retcode: {}".format(retcode))
     assert retcode == 0, "Fail to generate .config and rtconfig.h"
 
     src = GetCustomMemMapSrc(bsp_root, build_dir, rtconfig.CHIP, board)
