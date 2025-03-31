@@ -91,7 +91,7 @@ def get_sifli_sdk_env() -> Dict[str,str]:
         # TODO: 2.x env, remove at 3.x
         'SIFLI_SDK': f"{os.environ['SIFLI_SDK_PATH']}/",
         'RTT_CC': 'gcc',
-        'EXEC_PATH': '',
+        'RTT_EXEC_PATH': os.environ['PATH'],
         'PYTHONPATH': os.pathsep.join([os.path.join(conf.SIFLI_SDK_PATH, 'tools', 'build')]),
     }
 

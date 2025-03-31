@@ -34,7 +34,7 @@ def GetGCCRoot(rtconfig):
         if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
             exe_dir = os.path.dirname(candidate)
             if os.path.basename(exe_dir).lower() == "bin":
-                return os.path.dirname(exe_dir)
+                return os.path.join(os.path.dirname(exe_dir), 'arm-none-eabi')
             else:
                 return exe_dir
     return None

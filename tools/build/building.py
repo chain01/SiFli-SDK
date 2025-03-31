@@ -675,7 +675,7 @@ def AddChildProj(proj_name, proj_path, img_embedded=False, shared_option=None, c
             AR = rtconfig.AR, ARFLAGS = '-rc', LIBPATH=['.'],
             LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
             
-        # proj_env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+        proj_env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
         
     proj_env['build_dir'] = proj_rtconfig.OUTPUT_DIR
     proj_env['BSP_ROOT'] = os.path.abspath(proj_path)
@@ -1101,13 +1101,13 @@ def PrepareBuilding(env, has_libcpu=False, remove_components = []):
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
 
-    # if env['PLATFORM'] == 'win32':
-    #     os.environ['PATH'] = rtconfig.EXEC_PATH + ";" + os.environ['PATH']
-    # else:
-    #     os.environ['PATH'] = rtconfig.EXEC_PATH + ":" + os.environ['PATH']
+    if env['PLATFORM'] == 'win32':
+        os.environ['PATH'] = rtconfig.EXEC_PATH + ";" + os.environ['PATH']
+    else:
+        os.environ['PATH'] = rtconfig.EXEC_PATH + ":" + os.environ['PATH']
 
     # add program path
-    # env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+    env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
     # add rtconfig.h/BSP path into Kernel group
     # DefineGroup("Kernel", [], [], CPPPATH=[str(Dir('#').abspath)])
     # Dir('#') points to where SConstruct locates, so it cannot differentiate parent and child project root directory
@@ -1323,6 +1323,7 @@ def PrepareBuilding(env, has_libcpu=False, remove_components = []):
         logging.debug("No rtthread included in build")
     else:
         # include kernel
+
         objs.extend(SConscript(Rtt_Root + '/src/SConscript', variant_dir=kernel_vdir + '/src', duplicate=0))
         # include libcpu
         if not has_libcpu:
@@ -2717,8 +2718,7 @@ def SifliEnv(BSP_Root = None):
     # bsp lib config
     rtconfig.BSP_LIBRARY_TYPE = None        
 
-    if os.getenv('RTT_EXEC_PATH'):
-        rtconfig.EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    rtconfig.EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
     if not rtconfig.ARCH=='sim':
         rtconfig.LINK_SCRIPT_SRC = rtconfig.LINK_SCRIPT
