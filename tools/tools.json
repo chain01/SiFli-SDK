@@ -250,23 +250,23 @@
       "versions": [
         {
           "linux-amd64": {
-            "sha256": "62a63b981fe391a9cbad7ef51b17e49aeaa3e7b0d029b36ca1e9c3b2a9b78823",
-            "size": 149739784,
+            "sha256": "b93f17586b0048c15211c7ace48916f6b83d20fdfa985a790186b13c81f9c9a5",
+            "size": 152823552,
             "url": "https://github.com/OpenSiFli/crosstool-ng/releases/download/14.2.0-20250221/arm-none-eabi-14.2.0-x86_64-linux-gnu.tar.xz"
           },
           "linux-arm64": {
-            "sha256": "87330bab085dd8749d4ed0ad633674b9dc48b237b61069e3b481abd364d0a684",
-            "size": 151967360,
+            "sha256": "75c5b7888ad380e37391063d0a3fe33b3f12dd3481b492c85aaa5ebb738a5834",
+            "size": 149283092,
             "url": "https://github.com/OpenSiFli/crosstool-ng/releases/download/14.2.0-20250221/arm-none-eabi-14.2.0-aarch64-linux-gnu.tar.xz"
           },
           "macos": {
-            "sha256": "2d9e717dd4f7751d18936ae1365d25916534105ebcb7583039eff1092b824505",
-            "size": 145118692,
+            "sha256": "ce32a964e1ab16e814c1c65b19214da7b1c99ae9ed66a2ee7b2e7ddd87f8fb81",
+            "size": 145067960,
             "url": "https://github.com/OpenSiFli/crosstool-ng/releases/download/14.2.0-20250221/arm-none-eabi-14.2.0-x86_64-apple-darwin.tar.xz"
           },
           "macos-arm64": {
-            "sha256": "c7c78ffab9bebfce91d99d3c24da6bf4b81c01e16cf551eb2ff9f25b9e0a3818",
-            "size": 134812148,
+            "sha256": "9cfb59dcf7c3e348a288577a4eba3a925cd08963b6c4d00ee7bb1468f6e2a495",
+            "size": 135121680,
             "url": "https://github.com/OpenSiFli/crosstool-ng/releases/download/14.2.0-20250221/arm-none-eabi-14.2.0-aarch64-apple-darwin.tar.xz"
           },
           "name": "14.2.1",
