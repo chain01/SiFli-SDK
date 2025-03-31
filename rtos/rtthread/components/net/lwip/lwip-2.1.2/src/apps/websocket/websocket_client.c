@@ -84,6 +84,7 @@
 #include "lwip/debug.h"
 #include "lwip/mem.h"
 #include "lwip/init.h"
+#include "lwip/tcpip.h"
 #include "lwip/apps/http_client.h"
 #include "lwip/apps/websocket_client.h"
 #include "lws-sha1-base64.h"
@@ -500,7 +501,7 @@ err_t wsock_close(wsock_state_t *pws, wsock_result_t result, err_t err)
     if (pws->tcp_state == WS_TCP_CLOSED)
     {
         printf("wsock_close() TCP already closed\n");
-        return ERR_CLSD;
+        // return ERR_CLSD;
     }
 
     if (!(pws->pcb &&
@@ -508,7 +509,7 @@ err_t wsock_close(wsock_state_t *pws, wsock_result_t result, err_t err)
             (pws->state1 == PWS_STATE_INITD)))
     {
         printf("wsock_close() passed invalid wsock_state_t struct\n");
-        return ERR_ABRT;
+        // return ERR_ABRT;
     }
 
     /* LWIP_ASSERT("pws != NULL", pws != NULL);
@@ -990,17 +991,21 @@ wsock_write(wsock_state_t *pws, const char *buf, u16_t buflen, uint8_t opcode)
     LWIP_ASSERT("pws->state0 == alloc'd", (pws->state0 == PWS_STATE_INITD));
     LWIP_ASSERT("pws->state1 == alloc'd", (pws->state1 == PWS_STATE_INITD));
 
-    err_t   err;
+    err_t   err=ERR_OK;
     char    hdr[WSHDRLEN_MAX], *maskkey;
     size_t  hdrlen = WSHDRLEN_MIN, pktlen = 0;
 
-    if ((buflen > 0) && !buf)
-        return ERR_VAL;
+    LOCK_TCPIP_CORE();
+    if ((buflen > 0) && !buf) {
+        err= ERR_VAL;
+        goto end;
+    }
 
     if (pws->tcp_state != WS_TCP_CONNECTED)
     {
         printf("  wsock_write() tcp not connected (%d)\n", pws->tcp_state);
-        return ERR_CONN;
+        err=ERR_CONN;
+        goto end;
     }
 
     // Generate the websocket header and calculate the length of the buffer
@@ -1038,7 +1043,8 @@ wsock_write(wsock_state_t *pws, const char *buf, u16_t buflen, uint8_t opcode)
     {
         // Only support smaller payload sizes.
         printf("aborting due to oversize payload\n");
-        return wsock_close(pws, WSOCK_RESULT_ERR_MEM, ERR_MEM);
+        err= wsock_close(pws, WSOCK_RESULT_ERR_MEM, ERR_MEM);
+        goto end;
     }
 
     // Generate the masking key
@@ -1054,14 +1060,16 @@ wsock_write(wsock_state_t *pws, const char *buf, u16_t buflen, uint8_t opcode)
     if (pws->request == NULL)
     {
         printf("aborting due to pbuf_alloc() failed ...\n");
-        return wsock_close(pws, WSOCK_RESULT_ERR_MEM, ERR_MEM);
+        err=wsock_close(pws, WSOCK_RESULT_ERR_MEM, ERR_MEM);
+        goto end;
     }
 
     if (pws->request->next != NULL)
     {
         // pbuf needs to be in one piece ...
         printf("aborting due to fragmented pbuf ...\n");
-        return wsock_close(pws, WSOCK_RESULT_ERR_MEM, ERR_MEM);
+        err=wsock_close(pws, WSOCK_RESULT_ERR_MEM, ERR_MEM);
+        goto end;
     }
 
     if (wsverbose) printf("==> ALLOC'D pbuf 2 ...\n");
@@ -1088,7 +1096,8 @@ wsock_write(wsock_state_t *pws, const char *buf, u16_t buflen, uint8_t opcode)
     if (err != ERR_OK)
     {
         printf("altcp_write() failed - closing wsock\n");
-        return wsock_close(pws, WSOCK_RESULT_ERR_UNKNOWN, err);
+        err=wsock_close(pws, WSOCK_RESULT_ERR_UNKNOWN, err);
+        goto end;
     }
 
     // success; free the request
@@ -1099,7 +1108,9 @@ wsock_write(wsock_state_t *pws, const char *buf, u16_t buflen, uint8_t opcode)
     pws->request = NULL;
 
     altcp_output(pws->pcb);
-    return ERR_OK;
+end:
+    UNLOCK_TCPIP_CORE();
+    return err;
 }
 
 /**
