@@ -202,7 +202,7 @@ static rt_err_t rt_bt_lwip_protocol_send(rt_device_t device, struct pbuf *p)
         // rt_kprintf("enter rt_bt_lwip_protocol_send total ,total len %d\n",p->tot_len);
         frame = (rt_uint8_t *)p->payload;
         rt_bt_prot_transfer_instance(bt_instance, frame, p->tot_len);
-        LOG_D("F:%s L:%d run len:%d", __FUNCTION__, __LINE__, p->tot_len);
+        // LOG_D("F:%s L:%d run len:%d", __FUNCTION__, __LINE__, p->tot_len);
         return RT_EOK;
     }
 
