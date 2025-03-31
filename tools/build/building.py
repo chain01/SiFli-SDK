@@ -967,7 +967,7 @@ def PrepareBuilding(env, has_libcpu=False, remove_components = []):
     if (v_major >= 4):
         # compilation database is supported since SCons 4.x  
         env.Tool('compilation_db')
-        cdb = env.CompilationDatabase('compile_database.json')
+        cdb = env.CompilationDatabase(os.path.join(rtconfig.OUTPUT_DIR, 'compile_commands.json'))
         Alias('cdb', cdb)
 
     # make an absolute root directory
