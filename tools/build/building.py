@@ -675,7 +675,7 @@ def AddChildProj(proj_name, proj_path, img_embedded=False, shared_option=None, c
             AR = rtconfig.AR, ARFLAGS = '-rc', LIBPATH=['.'],
             LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
             
-        proj_env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+        # proj_env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
         
     proj_env['build_dir'] = proj_rtconfig.OUTPUT_DIR
     proj_env['BSP_ROOT'] = os.path.abspath(proj_path)
@@ -1022,11 +1022,11 @@ def PrepareBuilding(env, has_libcpu=False, remove_components = []):
 
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
-    if not os.path.exists(rtconfig.EXEC_PATH):
-        if 'RTT_EXEC_PATH' in os.environ:
-            # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
-            del os.environ['RTT_EXEC_PATH']
-            utils.ReloadModule(rtconfig)
+    # if not os.path.exists(rtconfig.EXEC_PATH):
+    #     if 'RTT_EXEC_PATH' in os.environ:
+    #         # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
+    #         del os.environ['RTT_EXEC_PATH']
+    #         utils.ReloadModule(rtconfig)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM == 'armcc':
@@ -1101,13 +1101,13 @@ def PrepareBuilding(env, has_libcpu=False, remove_components = []):
         win32_spawn.env = env
         env['SPAWN'] = win32_spawn.spawn
 
-    if env['PLATFORM'] == 'win32':
-        os.environ['PATH'] = rtconfig.EXEC_PATH + ";" + os.environ['PATH']
-    else:
-        os.environ['PATH'] = rtconfig.EXEC_PATH + ":" + os.environ['PATH']
+    # if env['PLATFORM'] == 'win32':
+    #     os.environ['PATH'] = rtconfig.EXEC_PATH + ";" + os.environ['PATH']
+    # else:
+    #     os.environ['PATH'] = rtconfig.EXEC_PATH + ":" + os.environ['PATH']
 
     # add program path
-    env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+    # env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
     # add rtconfig.h/BSP path into Kernel group
     # DefineGroup("Kernel", [], [], CPPPATH=[str(Dir('#').abspath)])
     # Dir('#') points to where SConstruct locates, so it cannot differentiate parent and child project root directory
@@ -1981,10 +1981,10 @@ def EndBuilding(target, program = None):
         from cscope import CscopeDatabase
         CscopeDatabase(Projects)
 
-    if not GetOption('help') and not GetOption('target'):
-        if not os.path.exists(rtconfig.EXEC_PATH) and not GetDepend('BSP_USING_PC_SIMULATOR'):
-            logging.error("Error: the toolchain path (" + rtconfig.EXEC_PATH + ") is not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
-            exit(1)
+    # if not GetOption('help') and not GetOption('target'):
+    #     if not os.path.exists(rtconfig.EXEC_PATH) and not GetDepend('BSP_USING_PC_SIMULATOR'):
+    #         logging.error("Error: the toolchain path (" + rtconfig.EXEC_PATH + ") is not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
+    #         exit(1)
 
     if need_exit:
         exit(0)

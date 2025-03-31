@@ -1,6 +1,114 @@
 {
   "tools": [
     {
+      "description": "sftool is a download tool for the SiFli family of chips",
+      "export_paths": [
+        [
+          ""
+        ]
+      ],
+      "export_vars": {},
+      "info_url": "https://github.com/OpenSiFli/sftool",
+      "install": "always",
+      "license": "Apache-2.0",
+      "name": "sftool",
+      "supported_targets": [
+        "all"
+      ],
+      "version_cmd": [
+        "sftool",
+        "--version"
+      ],
+      "version_regex": "sftool\\s+([\\d.]+)",
+      "versions": [
+        {
+          "name": "0.1.3",
+          "status": "recommended",
+          "macos-arm64": {
+            "sha256": "DF2637591C9D725870E7D3ACD511B789556A0FE2FD360BA71CA480439475DA57",
+            "size": 4045836,
+            "url": "https://github.com/OpenSiFli/sftool/releases/download/0.1.3/sftool-0.1.3-aarch64-apple-darwin.tar.xz"
+          },
+          "linux-arm64": {
+            "sha256": "C4F9AD915F0EB8A77058749A9745F2F76D35680B3E6138BA38F4A57595C868FC",
+            "size": 4129384,
+            "url": "https://github.com/OpenSiFli/sftool/releases/download/0.1.3/sftool-0.1.3-aarch64-unknown-linux-gnu.tar.xz"
+          },
+          "win32": {
+            "sha256": "66F59A4F8BC6F99FA8EF551B49A7E4FFF0F6F307A072F18AF80D058FD07E36DD",
+            "size": 4787123,
+            "url": "https://github.com/OpenSiFli/sftool/releases/download/0.1.3/sftool-0.1.3-i686-pc-windows-msvc.zip"
+          },
+          "linux-i686": {
+            "sha256": "68C3D7E4E6B9A90174168C21E8AA5C08B3E40E5359727FD2DD623B9E05783A5D",
+            "size": 4355032,
+            "url": "https://github.com/OpenSiFli/sftool/releases/download/0.1.3/sftool-0.1.3-i686-unknown-linux-gnu.tar.xz"
+          },
+          "macos": {
+            "sha256": "355CA06C84BD993D55B7212F78B1F94A8E6B1E1E66BC0A6F20078989C9843223",
+            "size": 4131728,
+            "url": "https://github.com/OpenSiFli/sftool/releases/download/0.1.3/sftool-0.1.3-x86_64-apple-darwin.tar.xz"
+          },
+          "win64": {
+            "sha256": "1CF3B6F081FDE66AB8E2EC1F14E533E3C2425E35707C4DEF9F513E15C6E4A294",
+            "size": 4841466,
+            "url": "https://github.com/OpenSiFli/sftool/releases/download/0.1.3/sftool-0.1.3-x86_64-pc-windows-msvc.zip"
+          },
+          "linux-amd64": {
+            "sha256": "A4593CEF1D69C8AD7D00856498C7DDED7A61C7B6F64E499AC7988BF42E60359C",
+            "size": 4231336,
+            "url": "https://github.com/OpenSiFli/sftool/releases/download/0.1.3/sftool-0.1.3-x86_64-unknown-linux-gnu.tar.xz"
+          }
+        }
+      ]
+    },
+    {
+      "description": "SiFli-SDK wrapper tool for Windows",
+      "export_paths": [
+        [
+          ""
+        ]
+      ],
+      "export_vars": {},
+      "info_url": "https://github.com/OpenSiFli/sifli_sdk_wrapper",
+      "install": "never",
+      "license": "Apache-2.0",
+      "name": "sdk-exe",
+      "platform_overrides": [
+        {
+          "install": "always",
+          "platforms": [
+            "win32",
+            "win64"
+          ]
+        }
+      ],
+      "supported_targets": [
+        "all"
+      ],
+      "version_cmd": [
+        "sdk.py.exe",
+        "-v"
+      ],
+      "version_regex": "([0-9.]+)",
+      "versions": [
+        {
+          "name": "0.1.1",
+          "status": "recommended",
+          "win32": {
+            "sha256": "6A3FF0A3F747C2C5FD958FEBFCCA9537767C84A9ED00401140AB5121C9BDA99C",
+            "size": 137374,
+            "url": "https://github.com/OpenSiFli/sifli_sdk_wrapper/releases/download/0.1.1/sdk-py-v0.1.1.zip"
+          },
+          "win64": {
+            "sha256": "6A3FF0A3F747C2C5FD958FEBFCCA9537767C84A9ED00401140AB5121C9BDA99C",
+            "size": 137374,
+            "url": "https://github.com/OpenSiFli/sifli_sdk_wrapper/releases/download/0.1.1/sdk-py-v0.1.1.zip"
+          }
+        }
+      ]
+    },
+    {
       "description": "CMake build system",
       "export_paths": [
         [

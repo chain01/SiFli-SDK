@@ -26,15 +26,18 @@ import re
 import platform 
 
 def GetGCCRoot(rtconfig):
-    exec_path = rtconfig.EXEC_PATH
-    prefix = rtconfig.PREFIX
-
-    if prefix.endswith('-'):
-        prefix = prefix[:-1]
-
-    root_path = os.path.join(exec_path, '..', prefix)
-
-    return root_path
+    executable_name = "arm-none-eabi-gcc.exe" if os.name == 'nt' else "arm-none-eabi-gcc"
+    paths = os.environ.get("PATH", "").split(os.pathsep)
+    
+    for directory in paths:
+        candidate = os.path.join(directory, executable_name)
+        if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+            exe_dir = os.path.dirname(candidate)
+            if os.path.basename(exe_dir).lower() == "bin":
+                return os.path.dirname(exe_dir)
+            else:
+                return exe_dir
+    return None
 
 def CheckHeader(rtconfig, filename):
     root = GetGCCRoot(rtconfig)
@@ -75,7 +78,8 @@ def GCCResult(rtconfig, str):
             return re.search(pattern, string).group(0)
         return None
 
-    gcc_cmd = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
+    # gcc_cmd = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
+    gcc_cmd = rtconfig.CC
 
     # use temp file to get more information 
     f = open('__tmp.c', 'w')
@@ -152,10 +156,10 @@ def GCCResult(rtconfig, str):
     return result
 
 def GenerateGCCConfig(rtconfig, path=''):
-    if not os.path.exists(rtconfig.EXEC_PATH):
-        # not generate empty ccconfig.h if toolchain is not present
-        print("Error: the toolchain path (" + rtconfig.EXEC_PATH + ") is not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
-        return
+    # if not os.path.exists(rtconfig.EXEC_PATH):
+    #     # not generate empty ccconfig.h if toolchain is not present
+    #     print("Error: the toolchain path (" + rtconfig.EXEC_PATH + ") is not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
+    #     return
             
     str = ''
     cc_header = ''

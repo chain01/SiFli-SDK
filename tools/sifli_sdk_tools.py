@@ -54,8 +54,6 @@ from ssl import SSLContext
 from tarfile import TarFile
 from zipfile import ZipFile
 
-from tools.activate import sdk_path
-
 # Important notice: Please keep the lines above compatible with old Pythons so it won't fail with ImportError but with
 # a nice message printed by python_version_checker.check()
 try:
@@ -358,62 +356,6 @@ CURRENT_PLATFORM = parse_platform_arg(PYTHON_PLATFORM)
 EXPORT_SHELL = 'shell'
 EXPORT_KEY_VALUE = 'key-value'
 
-# the older "DigiCert Global Root CA" certificate used with github.com
-DIGICERT_ROOT_CA_CERT = """
------BEGIN CERTIFICATE-----
-MIIDrzCCApegAwIBAgIQCDvgVpBCRrGhdWrJWZHHSjANBgkqhkiG9w0BAQUFADBh
-MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
-d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD
-QTAeFw0wNjExMTAwMDAwMDBaFw0zMTExMTAwMDAwMDBaMGExCzAJBgNVBAYTAlVT
-MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j
-b20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IENBMIIBIjANBgkqhkiG
-9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4jvhEXLeqKTTo1eqUKKPC3eQyaKl7hLOllsB
-CSDMAZOnTjC3U/dDxGkAV53ijSLdhwZAAIEJzs4bg7/fzTtxRuLWZscFs3YnFo97
-nh6Vfe63SKMI2tavegw5BmV/Sl0fvBf4q77uKNd0f3p4mVmFaG5cIzJLv07A6Fpt
-43C/dxC//AH2hdmoRBBYMql1GNXRor5H4idq9Joz+EkIYIvUX7Q6hL+hqkpMfT7P
-T19sdl6gSzeRntwi5m3OFBqOasv+zbMUZBfHWymeMr/y7vrTC0LUq7dBMtoM1O/4
-gdW7jVg/tRvoSSiicNoxBN33shbyTApOB6jtSj1etX+jkMOvJwIDAQABo2MwYTAO
-BgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUA95QNVbR
-TLtm8KPiGxvDl7I90VUwHwYDVR0jBBgwFoAUA95QNVbRTLtm8KPiGxvDl7I90VUw
-DQYJKoZIhvcNAQEFBQADggEBAMucN6pIExIK+t1EnE9SsPTfrgT1eXkIoyQY/Esr
-hMAtudXH/vTBH1jLuG2cenTnmCmrEbXjcKChzUyImZOMkXDiqw8cvpOp/2PV5Adg
-06O/nVsJ8dWO41P0jmP6P6fbtGbfYmbW0W5BjfIttep3Sp+dWOIrWcBAI+0tKIJF
-PnlUkiaY4IBIqDfv8NZ5YBberOgOzW6sRBc4L0na4UU+Krk2U886UAb3LujEV0ls
-YSEY1QSteDwsOoBrp+uvFRTp2InBuThs4pFsiv9kuXclVzDAGySj4dzp30d8tbQk
-CAUw7C29C79Fv1C5qfPrmAESrciIxpg0X40KPMbp1ZWVbd4=
------END CERTIFICATE-----
-"""
-
-# the newer "DigiCert Global Root G2" certificate used with dl.espressif.com
-DIGICERT_ROOT_G2_CERT = """
------BEGIN CERTIFICATE-----
-MIIDjjCCAnagAwIBAgIQAzrx5qcRqaC7KGSxHQn65TANBgkqhkiG9w0BAQsFADBh
-MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
-d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBH
-MjAeFw0xMzA4MDExMjAwMDBaFw0zODAxMTUxMjAwMDBaMGExCzAJBgNVBAYTAlVT
-MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j
-b20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IEcyMIIBIjANBgkqhkiG
-9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuzfNNNx7a8myaJCtSnX/RrohCgiN9RlUyfuI
-2/Ou8jqJkTx65qsGGmvPrC3oXgkkRLpimn7Wo6h+4FR1IAWsULecYxpsMNzaHxmx
-1x7e/dfgy5SDN67sH0NO3Xss0r0upS/kqbitOtSZpLYl6ZtrAGCSYP9PIUkY92eQ
-q2EGnI/yuum06ZIya7XzV+hdG82MHauVBJVJ8zUtluNJbd134/tJS7SsVQepj5Wz
-tCO7TG1F8PapspUwtP1MVYwnSlcUfIKdzXOS0xZKBgyMUNGPHgm+F6HmIcr9g+UQ
-vIOlCsRnKPZzFBQ9RnbDhxSJITRNrw9FDKZJobq7nMWxM4MphQIDAQABo0IwQDAP
-BgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBhjAdBgNVHQ4EFgQUTiJUIBiV
-5uNu5g/6+rkS7QYXjzkwDQYJKoZIhvcNAQELBQADggEBAGBnKJRvDkhj6zHd6mcY
-1Yl9PMWLSn/pvtsrF9+wX3N3KjITOYFnQoQj8kVnNeyIv/iPsGEMNKSuIEyExtv4
-NeF22d+mQrvHRAiGfzZ0JFrabA0UWTW98kndth/Jsw1HKj2ZL7tcu7XUIOGZX1NG
-Fdtom/DzMNU+MeKNhJ7jitralj41E6Vf8PlwUHBHQRFXGU7Aj64GxJUTFy8bJZ91
-8rGOmaFvE7FBcf6IKshPECBV1/MUReXgRPTqh5Uykw7+U0b6LJ3/iyK5S9kJRaTe
-pLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTfl
-MrY=
------END CERTIFICATE-----
-"""
-
-DL_CERT_DICT = {'dl.espressif.com': DIGICERT_ROOT_G2_CERT,
-                'github.com': DIGICERT_ROOT_CA_CERT}
-
-
 def run_cmd_check_output(cmd: List[str], input_text: Optional[str]=None, extra_paths: Optional[List[str]]=None) -> bytes:
     """
     Runs command and checks output for exceptions. If AttributeError or TypeError occurs, function re-runs the process.
@@ -554,85 +496,24 @@ def splittype(url: str) -> Tuple[Optional[str], str]:
         return scheme.lower(), data
     return None, url
 
-
-def urlretrieve_ctx(url: str,
-                    filename: str,
-                    reporthook: Optional[Callable[[int, int, int], None]]=None,
-                    data: Optional[bytes]=None,
-                    context: Optional[SSLContext]=None) -> Tuple[str, addinfourl]:
-    """
-    Retrieve data from given URL. An alternative version of urlretrieve which takes SSL context as an argument.
-    """
-    url_type, path = splittype(url)
-
-    # urlopen doesn't have context argument in Python <=2.7.9
-    extra_urlopen_args = {}
-    if context:
-        extra_urlopen_args['context'] = context
-    with contextlib.closing(urlopen(url, data, **extra_urlopen_args)) as fp:  # type: ignore
-        headers = fp.info()
-
-        # Just return the local path and the "headers" for file://
-        # URLs. No sense in performing a copy unless requested.
-        if url_type == 'file' and not filename:
-            return os.path.normpath(path), headers
-
-        # Handle temporary file setup.
-        tfp = open(filename, 'wb')
-
-        with tfp:
-            result = filename, headers
-            bs = 1024 * 8
-            size = int(headers.get('content-length', -1))
-            read = 0
-            blocknum = 0
-
-            if reporthook:
-                reporthook(blocknum, bs, size)
-
-            while True:
-                block = fp.read(bs)
-                if not block:
-                    break
-                read += len(block)
-                tfp.write(block)
-                blocknum += 1
-                if reporthook:
-                    reporthook(blocknum, bs, size)
-
-    if size >= 0 and read < size:
-        raise ContentTooShortError(
-            'retrieval incomplete: got only %i out of %i bytes'
-            % (read, size), result)
-
-    return result
-
-
 def download(url: str, destination: str) -> Union[None, Exception]:
     """
     Download from given url and save into given destination.
     """
     info(f'Downloading {url}')
     info(f'Destination: {destination}')
+    import requests
     try:
-        for site, cert in DL_CERT_DICT.items():
-            # For dl.espressif.com and github.com, add the DigiCert root certificate.
-            # This works around the issue with outdated certificate stores in some installations.
-            if site in url:
-                ctx = ssl.create_default_context()
-                ctx.load_verify_locations(cadata=cert)
-                break
-        else:
-            ctx = None
-
-        urlretrieve_ctx(url, destination, report_progress if not g.non_interactive else None, context=ctx)
+        with requests.get(url, stream=True) as response:
+            response.raise_for_status()
+            with open(destination, 'wb') as file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        file.write(chunk)
         sys.stdout.write('\rDone\n')
         return None
-    except Exception as e:
-        # urlretrieve could throw different exceptions, e.g. IOError when the server is down
+    except requests.RequestException as e:
         return e
-    finally:
-        sys.stdout.flush()
 
 
 def rename_with_retry(path_from: str, path_to: str) -> None:
@@ -1164,7 +1045,7 @@ class SiFliSDKTool(object):
         """
         Compare the computed sha256 to sha256 specified by downloaded archive.
         """
-        expected_sha256 = download_obj.sha256
+        expected_sha256 = download_obj.sha256.lower()
         expected_size = download_obj.size
         file_size, file_sha256 = get_file_size_sha256(local_path)
         if file_size != expected_size:
@@ -2704,6 +2585,12 @@ def action_install_python_env(args):  # type: ignore
     info(os.linesep.join(f'  - {path}' for path in requirements_file_list))
     subprocess.check_call(run_args, stdout=sys.stdout, stderr=sys.stderr, env=env_copy)
 
+def action_get_install_python_env(args): # type: ignore
+    sdk_python_env_path, _, virtualenv_python, sdk_version = get_python_env_path()
+    if os.path.exists(virtualenv_python):
+        print(sdk_python_env_path)
+    else:
+        print("Error: Python environment not found")
 
 def action_check_python_dependencies(args):  # type: ignore
     """
@@ -3180,6 +3067,7 @@ def main(argv: List[str]) -> None:
                                     help=('Disable constraint settings. Use with care and only when you want to manage '
                                           'package versions by yourself. It can be set with the SIFLI_SDK_PYTHON_CHECK_CONSTRAINTS '
                                           'environment variable.'))
+    get_get_install_python_env = subparsers.add_parser('get-install-python-env', help='Prints the path to the Python environment')
 
     if SDK_MAINTAINER:
         add_version = subparsers.add_parser('add-version', help='Add or update download info for a version')
