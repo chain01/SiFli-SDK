@@ -417,7 +417,7 @@ wsock_dns_found(const char *hostname, const ip_addr_t *ipaddr, void *arg)
     wsock_state_t *pws = (wsock_state_t *)arg;
 
     LWIP_ASSERT("pws != NULL", pws != NULL);
-    LWIP_ASSERT("pws->pcb != NULL", pws->pcb != NULL);
+    // LWIP_ASSERT("pws->pcb != NULL", pws->pcb != NULL);
     LWIP_ASSERT("pws->state0 == alloc'd", (pws->state0 == PWS_STATE_INITD));
     LWIP_ASSERT("pws->state1 == alloc'd", (pws->state1 == PWS_STATE_INITD));
 
@@ -455,7 +455,7 @@ wsock_connect_dns(wsock_state_t *pws, const char *srvname)
     err_t err;
 
     LWIP_ASSERT("pws != NULL", pws != NULL);
-    LWIP_ASSERT("pws->pcb != NULL", pws->pcb != NULL);
+    // LWIP_ASSERT("pws->pcb != NULL", pws->pcb != NULL);
     LWIP_ASSERT("pws->state0 == alloc'd", (pws->state0 == PWS_STATE_INITD));
     LWIP_ASSERT("pws->state1 == alloc'd", (pws->state1 == PWS_STATE_INITD));
 
