@@ -1236,17 +1236,16 @@ def PrepareBuilding(env, has_libcpu=False, remove_components = []):
         genconfig()
         exit(0)
 
-    if env['PLATFORM'] != 'win32':
-        if not option_added:
-            AddOption('--menuconfig',
-                        dest = 'menuconfig',
-                        action = 'store_true',
-                        default = False,
-                        help = 'make menuconfig for RT-Thread BSP')
-        if GetOption('menuconfig'):
-            board = f"--board={GetOption('board')}"
-            subprocess.call([sys.executable, os.path.join(SIFLI_SDK, 'tools',"kconfig" , 'menuconfig.py'), board])
-            exit(0)
+    if not option_added:
+        AddOption('--menuconfig',
+                    dest = 'menuconfig',
+                    action = 'store_true',
+                    default = False,
+                    help = 'make menuconfig for RT-Thread BSP')
+    if GetOption('menuconfig'):
+        board = f"--board={GetOption('board')}"
+        subprocess.call([sys.executable, os.path.join(SIFLI_SDK, 'tools',"kconfig" , 'menuconfig.py'), board])
+        exit(0)
 
     if not option_added:
         AddOption('--pyconfig',
