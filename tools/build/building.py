@@ -24,7 +24,7 @@
 #                             group definition.
 #
 
-import imp
+import importlib
 import os
 import re
 import shutil
@@ -616,11 +616,12 @@ def AddChildProj(proj_name, proj_path, img_embedded=False, shared_option=None, c
     if board:
         board_path1, board_path2 = GetBoardPath(board)
         logging.debug("Load {}".format(os.path.join(board_path2, 'rtconfig.py')))
-        proj_rtconfig = imp.load_source(proj_name, os.path.join(board_path2, 'rtconfig.py'))
-        proj_rtconfig2 = imp.load_source(proj_name, os.path.join(proj_path, 'rtconfig.py'))
+
+        proj_rtconfig = (lambda spec: (spec.loader.exec_module(mod := importlib.util.module_from_spec(spec)) or mod))(importlib.util.spec_from_file_location(proj_name, os.path.join(board_path2, 'rtconfig.py')))
+        proj_rtconfig2 = ( lambda spec: (spec.loader.exec_module(mod := importlib.util.module_from_spec(spec)) or mod))(importlib.util.spec_from_file_location(proj_name, os.path.join(proj_path, 'rtconfig.py')))
         MergeRtconfig(proj_rtconfig, proj_rtconfig2)
     else:    
-        proj_rtconfig = imp.load_source(proj_name, os.path.join(proj_path, 'rtconfig.py'))
+        proj_rtconfig = (lambda spec: (spec.loader.exec_module(mod := importlib.util.module_from_spec(spec)) or mod))(importlib.util.spec_from_file_location(proj_name, os.path.join(proj_path, 'rtconfig.py')))
 
     parent_name = ParentProjStack[-1]['name']
     if (len(ParentProjStack) == 1):
@@ -663,7 +664,7 @@ def AddChildProj(proj_name, proj_path, img_embedded=False, shared_option=None, c
 
     child_builder = None
     if os.path.isfile(os.path.join(proj_path, 'SConstruct.py')):
-        child_builder = imp.load_source(proj_name, os.path.join(proj_path, 'SConstruct.py'))
+        child_builder = (lambda spec: (spec.loader.exec_module(mod := importlib.util.module_from_spec(spec)) or mod))(importlib.util.spec_from_file_location(proj_name, os.path.join(proj_path, 'SConstruct.py')))
         proj_env = child_builder.create_env(proj_path)
         
     else:
@@ -2436,7 +2437,7 @@ def LoadRtconfig(board):
         logging.error('Board path "{}"" not found'.format(board_path2))
         exit(1)
 
-    proj_rtconfig = imp.load_source('main', os.path.join(board_path2, 'rtconfig.py'))
+    proj_rtconfig = (lambda spec: (spec.loader.exec_module(mod := importlib.util.module_from_spec(spec)) or mod))(importlib.util.spec_from_file_location('main', os.path.join(board_path2, 'rtconfig.py')))
     MergeRtconfig(proj_rtconfig, rtconfig)
         
     proj_rtconfig.OUTPUT_DIR = 'build_' + board + '/'
