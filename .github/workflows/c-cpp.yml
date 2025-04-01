@@ -20,4 +20,8 @@ jobs:
         run: ./install.sh
 
       - name: export env
-        run: ./export.sh
+        run: source export.sh
+      
+      - name: build
+        run: python3 /example/CI_Build.py
+        
