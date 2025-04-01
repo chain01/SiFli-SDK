@@ -150,11 +150,11 @@ wsock_init(wsock_state_t *pws, int ssl_enabled, int ping_enabled, wsapp_fn messa
 
         // Client TLS config may optionally take a certificate authority and
         // certificate length.  For now, we do not have this.
-        struct altcp_tls_config *pconf = altcp_tls_create_config_client(cert, cert_len);
-        LWIP_ASSERT("pconf != NULL", pconf != NULL);
+        pws->pconf = altcp_tls_create_config_client(cert, cert_len);
+        LWIP_ASSERT("pconf != NULL", pws->pconf != NULL);
 
         // Allocate the TLS protocol control block.
-        pws->pcb = altcp_tls_new(pconf, IPADDR_TYPE_ANY);
+        pws->pcb = altcp_tls_new(pws->pconf, IPADDR_TYPE_ANY);
     }
     else // Allocate a non-SSL TCP protocol control block.
         pws->pcb = altcp_new(NULL);
@@ -547,6 +547,10 @@ err_t wsock_close(wsock_state_t *pws, wsock_result_t result, err_t err)
         }
 
         pws->pcb = NULL;
+    }
+    if (pws->pconf) {
+        altcp_tls_free_config(pws->pconf);
+        pws->pconf = NULL;
     }
 
     pws->tcp_state = WS_TCP_CLOSED;

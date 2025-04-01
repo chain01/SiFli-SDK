@@ -101,6 +101,7 @@ typedef err_t (*wsapp_fn)(int code, char *buf, size_t len);
 typedef struct _wsock_state
 {
     unsigned int        state0;
+    struct altcp_tls_config *pconf;
     struct altcp_pcb    *pcb;
     ip_addr_t           remote_addr;
     u16_t               remote_port;
