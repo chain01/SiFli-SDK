@@ -417,7 +417,9 @@ void gui_pm_init(rt_device_t lcd, gui_pm_event_handler_t handler)
     s_gui_ctx.handler = handler;
     s_gui_ctx.lcd_opened = true;
 
+    pm_scenario_start(PM_SCENARIO_UI);
     s_gui_ctx.state = GUI_STATE_ACTIVE;
+
 
 }
 
