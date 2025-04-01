@@ -16,9 +16,18 @@ objs.extend(SConscript(os.path.join(cwd,  '../../src/lcpu/SConscript'), variant_
 
 
 if GetDepend("SOC_SF32LB52X"):
-    import imp
+    import importlib.util
 
-    filter = imp.load_source('filter', os.path.join(cwd, 'filter.py'))
+    cwd = os.getcwd()  # 或者根据实际需求指定目录
+
+    # 构建 filter.py 的完整路径
+    filter_path = os.path.join(cwd, 'filter.py')
+    # 利用 importlib.util.spec_from_file_location 创建模块的规格描述
+    spec = importlib.util.spec_from_file_location("filter", filter_path)
+    # 根据规格描述生成模块对象
+    filter = importlib.util.module_from_spec(spec)
+    # 加载模块（执行模块代码）
+    spec.loader.exec_module(filter)
     SetRomSymFilter(filter.rename_rules)
 
 # Add SDK
