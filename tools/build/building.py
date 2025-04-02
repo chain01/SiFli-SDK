@@ -185,7 +185,7 @@ def ImgFileBuilder(target, source, env):
             subprocess.call([EZIP_PATH, '-convert', str(source[0]), env['COLOR_FMT'], '-cfile', env['FILE_FMT'], '-section', env['SECTION_NAME'], '-simu'])
             shutil.move('output/t4_{}_r4_f0/{}'.format(env['COLOR_FMT'][1:], filename), '{}'.format(target[0]))
         else:
-            subprocess.call([EZIP_PATH, '-convert', str(source[0]), env['COLOR_FMT'], '-cfile', env['FILE_FMT'], '-dpt', '1', '-section', env['SECTION_NAME'], '-lvgl_version', env['LVGL_VER']])
+            subprocess.call([EZIP_PATH, '-convert', str(source[0]), env['COLOR_FMT'], '-cfile', env['FILE_FMT'], '-dpt', '1', '-section', env['SECTION_NAME']])
             shutil.move('output/t1_{}_f0/{}'.format(env['COLOR_FMT'][1:], filename), '{}'.format(target[0]))
 
 def FontFileBuild(target, source, env):
@@ -204,10 +204,10 @@ def ModifyFontTargets(target, source, env):
             
     return target, source
 
-def ImgResource(env, source, color_fmt, file_fmt, section_name, is_simu=False,lvgl_ver=8):
+def ImgResource(env, source, color_fmt, file_fmt, section_name, is_simu=False):
     target = []
     for s in source:
-        t = env.ImgFile(s, COLOR_FMT = color_fmt, FILE_FMT = file_fmt, SECTION_NAME = section_name, IS_SIMU=is_simu,LVGL_VER = lvgl_ver)
+        t = env.ImgFile(s, COLOR_FMT = color_fmt, FILE_FMT = file_fmt, SECTION_NAME = section_name, IS_SIMU=is_simu)
         target.extend(t)
     
     return target
