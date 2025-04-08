@@ -887,6 +887,8 @@ wsock_invoke_app(wsock_state_t *pws, struct pbuf *pb)
     uint8_t minlen  = pktbuf[1] & WSHDRBITS_PAYLOAD_LEN;
     size_t  paylen  = minlen;
 
+next_opcode:  
+
     if (opcode != OPCODE_TEXT && opcode != OPCODE_BINARY)
     {
         printf("got invalid opcode: %d\n", opcode);
@@ -932,6 +934,19 @@ wsock_invoke_app(wsock_state_t *pws, struct pbuf *pb)
     {
         pws->message_handler((opcode == OPCODE_TEXT) ? WS_TEXT : WS_DATA, paybuf, paylen);
     }
+
+    pktbuf = paybuf + paylen;
+    // Check if there is more data in the buffer.  If so, we need to
+    if((uint32_t)pktbuf - (uint32_t)(pb->payload) + 2 < pb->tot_len)
+    {
+        paybuf = pktbuf + WSHDRLEN_MIN;
+        opcode  = pktbuf[0] & WSHDRBITS_OPCODE;
+        minlen  = pktbuf[1] & WSHDRBITS_PAYLOAD_LEN;
+        paylen  = minlen;
+        goto next_opcode;
+    }
+
+
 }
 
 
