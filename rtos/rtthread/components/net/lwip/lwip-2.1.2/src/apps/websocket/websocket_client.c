@@ -137,6 +137,7 @@ wsock_init(wsock_state_t *pws, int ssl_enabled, int ping_enabled, wsapp_fn messa
 
     // Initialize the websocket state struct
     LWIP_ASSERT("pws != NULL", pws != NULL);
+    LWIP_ASSERT("pws.pcb != NULL", pws->pcb == NULL);
     memset(pws, 0, sizeof(wsock_state_t));
 
     pws->ssl_enabled     = ssl_enabled;
@@ -489,8 +490,11 @@ err_t wsock_close(wsock_state_t *pws, wsock_result_t result, err_t err)
 
     err_t   close_err = err;
 
-    if (pws->message_handler)
-        pws->message_handler(WS_DISCONNECT, (char *)(uint32_t)err, 0);
+    if (pws->tcp_state == WS_TCP_CLOSED)
+    {
+        rt_kprintf("wsocTCP already closed\n");
+        return ERR_OK;
+    }
 
     if (!pws)
     {
@@ -556,6 +560,14 @@ err_t wsock_close(wsock_state_t *pws, wsock_result_t result, err_t err)
     pws->tcp_state = WS_TCP_CLOSED;
     pws->state0    = PWS_STATE_DONE;
     pws->state1    = PWS_STATE_DONE;
+
+
+    if (pws->message_handler)
+    {
+        rt_kprintf("wsocTCP close\n");
+        pws->message_handler(WS_DISCONNECT, (char *)(uint32_t)err, 0);    
+    }
+
     return close_err;
 }
 
